@@ -27,13 +27,27 @@ async function initDB() {
         const connection = await mysql.createConnection({
             host: dbConfig.host,
             user: dbConfig.user,
-            password: dbConfig.password
+            port: dbConfig.port,
+            password: dbConfig.password,
+            ssl: {
+                rejectUnauthorized: false
+            }
         });
-        await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbConfig.database}\`;`);
         await connection.end();
 
         // Connect to the database pool
-        pool = mysql.createPool(dbConfig);
+        pool = mysql.createPool({
+            host: dbConfig.host,
+            port: dbConfig.port,
+            user: dbConfig.user,
+            password: dbConfig.password,
+            database: dbConfig.database,
+            ssl: {
+                rejectUnauthorized: false
+            },
+            waitForConnections: true,
+            connectionLimit: 10
+        });
         console.log('Connected to MySQL Database.');
 
         // Create users table
