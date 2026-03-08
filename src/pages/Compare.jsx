@@ -14,7 +14,7 @@ const Compare = () => {
     useEffect(() => {
         const fetchProductsAndFeatures = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/products-features');
+                const response = await fetch('https://footprint-6e9p.onrender.com/api/products-features');
                 if (!response.ok) {
                     throw new Error('Failed to fetch product data');
                 }

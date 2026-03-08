@@ -23,7 +23,7 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
         const fetchReviews = async () => {
             setIsLoadingReviews(true);
             try {
-                const response = await fetch(`http://localhost:5000/api/products/${product.id}/reviews`);
+                const response = await fetch(`https://footprint-6e9p.onrender.com/api/products/${product.id}/reviews`);
                 if (!response.ok) throw new Error('Failed to fetch reviews');
                 const data = await response.json();
                 setReviews(data);
@@ -80,7 +80,7 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
 
         setIsSubmittingReview(true);
         try {
-            const response = await fetch(`http://localhost:5000/api/products/${product.id}/reviews`, {
+            const response = await fetch(`https://footprint-6e9p.onrender.com/api/products/${product.id}/reviews`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -92,7 +92,7 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
 
             if (response.ok) {
                 // Refresh reviews
-                const reviewsResponse = await fetch(`http://localhost:5000/api/products/${product.id}/reviews`);
+                const reviewsResponse = await fetch(`https://footprint-6e9p.onrender.com/api/products/${product.id}/reviews`);
                 const reviewsData = await reviewsResponse.json();
                 setReviews(reviewsData);
                 setReviewText('');
