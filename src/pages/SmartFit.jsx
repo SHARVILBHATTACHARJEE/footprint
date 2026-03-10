@@ -71,7 +71,13 @@ const SmartFit = () => {
             // Fetch products from database
             const response = await fetch('https://footprint-6e9p.onrender.com/api/products');
             if (!response.ok) throw new Error('Failed to fetch products');
-            const data = await response.json();
+            const rawData = await response.json();
+            
+            const data = rawData.map(item => {
+                const rawPrice = item.price || "0";
+                const parsedPrice = parseFloat(rawPrice.toString().replace(/[^0-9.]/g, ''));
+                return { ...item, price: parsedPrice };
+            });
 
             // Artificial delay to make it feel like "analysis"
             await new Promise(resolve => setTimeout(resolve, 2000));
@@ -392,7 +398,7 @@ const SmartFit = () => {
                                                             <h4 className="text-xl font-bold uppercase mb-1">{product.name}</h4>
                                                             <p className="text-xs text-gray-400 font-mono tracking-wider">{product.walking_style || product.category}</p>
                                                         </div>
-                                                        <span className="text-xl font-bold text-[#00ff88]">₹{parseFloat(product.price)}</span>
+                                                        <span className="text-xl font-bold text-[#00ff88]">₹{product.price}</span>
                                                     </div>
                                                     <p className="text-sm text-gray-400 pt-2 min-h-[40px] italic">{product.description}</p>
 

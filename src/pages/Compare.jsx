@@ -19,7 +19,12 @@ const Compare = () => {
                     throw new Error('Failed to fetch product data');
                 }
                 const data = await response.json();
-                setProducts(data);
+                const formattedData = data.map(item => {
+                    const rawPrice = item.feature_price || item.price || "0";
+                    const parsedPrice = parseFloat(rawPrice.toString().replace(/[^0-9.]/g, ''));
+                    return { ...item, price: parsedPrice };
+                });
+                setProducts(formattedData);
 
                 // Pre-select the first 2 or 3 shoes if available
                 if (data.length > 0) {
@@ -56,7 +61,7 @@ const Compare = () => {
 
     // The attributes we want to compare in order
     const comparisonAttributes = [
-        { key: 'price', label: 'Price', format: (p) => p.feature_price || `₹${p.price}` },
+        { key: 'price', label: 'Price', format: (p) => `₹${p.price}` },
         { key: 'weight', label: 'Weight', format: (p) => p.weight || 'N/A' },
         { key: 'cushioning_level', label: 'Cushioning', format: (p) => p.cushioning_level || 'N/A' },
         { key: 'arch_support', label: 'Arch Support', format: (p) => p.arch_support || 'N/A' },

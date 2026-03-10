@@ -31,12 +31,18 @@ const Shop = () => {
                 const data = await response.json();
 
                 // Map numeric price strings back to numbers for sorting to work cleanly
-                const formattedData = data.map(item => ({
-                    ...item,
-                    image: item.image_url,
-                    price: parseFloat(item.feature_price || item.price),
-                    walkingStyle: item.walking_style // normalize key for frontend
-                }));
+                const formattedData = data.map(item => {
+                    const rawPrice = item.feature_price || item.price || "0";
+                    // Remove any non-numeric characters except the decimal point
+                    const parsedPrice = parseFloat(rawPrice.toString().replace(/[^0-9.]/g, ''));
+                    
+                    return {
+                        ...item,
+                        image: item.image_url,
+                        price: parsedPrice,
+                        walkingStyle: item.walking_style // normalize key for frontend
+                    };
+                });
 
                 setProducts(formattedData);
             } catch (error) {
