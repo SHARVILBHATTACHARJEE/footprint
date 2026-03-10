@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #000000;
+  --color-accent: #00ff88;
+  --color-secondary: #333333;
+  --font-sans: "Inter", sans-serif;
+  --animate-spin-slow: spin 8s linear infinite;
+}
+
+@layer base {
+
+  /* Global Resets */
+  html,
+  body {
+    background-color: var(--color-primary);
+    color: white;
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    cursor: none !important;
+  }
+
+  /* Aggressively hide system cursor on EVERYTHING */
+  *,
+  *::before,
+  *::after {
+    cursor: none !important;
+  }
+
+  /* Explicitly hide on interactive elements to override UA styles */
+  a,
+  button,
+  [role="button"],
+  input[type="submit"],
+  input[type="button"],
+  label,
+  select,
+  summary {
+    cursor: none !important;
+  }
+
+  /* Hover states often re-apply cursor: pointer */
+  a:hover,
+  button:hover,
+  [role="button"]:hover,
+  input[type="submit"]:hover {
+    cursor: none !important;
+  }
+
+  /* EXCEPTIONS: Inputs where user needs to type */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  textarea,
+  [contenteditable="true"] {
+    cursor: text !important;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  cursor: default;
+  /* Scrollbar usually uses default arrow */
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-accent);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00cc6a;
+}
