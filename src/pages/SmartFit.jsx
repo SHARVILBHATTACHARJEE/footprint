@@ -392,7 +392,7 @@ const SmartFit = () => {
                                                             <h4 className="text-xl font-bold uppercase mb-1">{product.name}</h4>
                                                             <p className="text-xs text-gray-400 font-mono tracking-wider">{product.walking_style || product.category}</p>
                                                         </div>
-                                                        <span className="text-xl font-bold text-[#00ff88]">${parseFloat(product.price)}</span>
+                                                        <span className="text-xl font-bold text-[#00ff88]">₹{parseFloat(product.price)}</span>
                                                     </div>
                                                     <p className="text-sm text-gray-400 pt-2 min-h-[40px] italic">{product.description}</p>
 

@@ -15,19 +15,19 @@ const ProductShowcase = () => {
         {
             name: "Velocity Pro",
             image: "/images/product-velocity.jpg",
-            price: "$180",
+            price: "₹180",
             description: "Engineered for maximum speed."
         },
         {
             name: "Urban Stride",
             image: "/images/product-urban.jpg",
-            price: "$145",
+            price: "₹145",
             description: "City aesthetics, comfort core."
         },
         {
             name: "Flex Form",
             image: "/images/product-flex.jpg",
-            price: "$120",
+            price: "₹120",
             description: "Adaptive fit for every move."
         }
     ];

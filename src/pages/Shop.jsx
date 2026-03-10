@@ -26,7 +26,7 @@ const Shop = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await fetch('https://footprint-6e9p.onrender.com/api/products');
+                const response = await fetch('https://footprint-6e9p.onrender.com/api/products-features');
                 if (!response.ok) throw new Error('Failed to fetch products');
                 const data = await response.json();
 
@@ -34,7 +34,7 @@ const Shop = () => {
                 const formattedData = data.map(item => ({
                     ...item,
                     image: item.image_url,
-                    price: parseFloat(item.price),
+                    price: parseFloat(item.feature_price || item.price),
                     walkingStyle: item.walking_style // normalize key for frontend
                 }));
 
@@ -223,7 +223,7 @@ const Shop = () => {
                                                 </h3>
                                                 <p className="text-xs text-gray-400 font-mono tracking-wider">{product.walkingStyle}</p>
                                             </div>
-                                            <span className="text-xl font-bold text-[#00ff88]">${product.price}</span>
+                                            <span className="text-xl font-bold text-[#00ff88]">₹{product.price}</span>
                                         </div>
                                         <p className="text-sm text-gray-500 pt-2 min-h-[40px]">{product.description}</p>
 

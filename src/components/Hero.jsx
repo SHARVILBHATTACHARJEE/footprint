@@ -2,10 +2,12 @@ import React, { useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
 import { useCursor } from '../context/CursorContext';
 import { ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Hero = () => {
     const { cursorHandlers } = useCursor();
     const containerRef = useRef(null);
+    const navigate = useNavigate();
 
     // Mouse Parallax for Image
     const x = useMotionValue(0);
@@ -97,6 +99,7 @@ const Hero = () => {
                     >
                         <button
                             {...cursorHandlers}
+                            onClick={() => navigate('/shop')}
                             className="group relative px-8 py-4 bg-white text-black font-bold uppercase tracking-widest overflow-hidden rounded-full hover:bg-[#00ff88] transition-colors duration-300"
                         >
                             <span className="relative z-10 flex items-center gap-2 group-hover:text-black transition-colors">

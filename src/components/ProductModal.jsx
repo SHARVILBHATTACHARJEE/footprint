@@ -163,7 +163,7 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
                                     </p>
 
                                     <div className="text-4xl font-bold text-white mb-8">
-                                        ${product.price}
+                                        ₹{product.price}
                                     </div>
 
                                     <div className="mb-8">

@@ -87,7 +87,7 @@ const CartSidebar = () => {
                                                         <Plus size={14} />
                                                     </button>
                                                 </div>
-                                                <span className="font-bold text-[#00ff88]">${item.price * item.quantity}</span>
+                                                <span className="font-bold text-[#00ff88]">₹{item.price * item.quantity}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -100,7 +100,7 @@ const CartSidebar = () => {
                             <div className="border-t border-[#333] p-6 bg-black">
                                 <div className="flex justify-between items-center mb-6">
                                     <span className="text-gray-400 uppercase tracking-widest text-sm">Subtotal</span>
-                                    <span className="text-2xl font-bold uppercase tracking-tighter">${cartTotal}</span>
+                                    <span className="text-2xl font-bold uppercase tracking-tighter">₹{cartTotal}</span>
                                 </div>
                                 <button
                                     onClick={() => alert('Proceeding to checkout...')}
