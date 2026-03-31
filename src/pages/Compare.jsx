@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, X, Plus, Check } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { getProductsWithFeatures } from '../firebase/firestore';
 
 const Compare = () => {
     const [products, setProducts] = useState([]);
@@ -10,25 +11,21 @@ const Compare = () => {
     const [error, setError] = useState(null);
     const { addToCart } = useCart();
 
-    // Fetch products with their features from the API
+    // Fetch products with their features from Firestore
     useEffect(() => {
         const fetchProductsAndFeatures = async () => {
             try {
-                const response = await fetch('https://footprint-6e9p.onrender.com/api/products-features');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch product data');
-                }
-                const data = await response.json();
+                const data = await getProductsWithFeatures();
                 const formattedData = data.map(item => {
-                    const rawPrice = item.feature_price || item.price || "0";
+                    const rawPrice = item.feature_price || item.price || '0';
                     const parsedPrice = parseFloat(rawPrice.toString().replace(/[^0-9.]/g, ''));
                     return { ...item, price: parsedPrice };
                 });
                 setProducts(formattedData);
 
                 // Pre-select the first 2 or 3 shoes if available
-                if (data.length > 0) {
-                    const initialSelection = data.slice(0, Math.min(3, data.length)).map(p => p.id);
+                if (formattedData.length > 0) {
+                    const initialSelection = formattedData.slice(0, Math.min(3, formattedData.length)).map(p => p.id);
                     setSelectedShoeIds(initialSelection);
                 }
                 setLoading(false);

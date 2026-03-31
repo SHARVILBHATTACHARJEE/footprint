@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
+import { getProducts } from '../firebase/firestore';
 
 const SmartFit = () => {
     const [step, setStep] = useState(1);
@@ -68,13 +69,11 @@ const SmartFit = () => {
         setIsAnalyzing(true);
 
         try {
-            // Fetch products from database
-            const response = await fetch('https://footprint-6e9p.onrender.com/api/products');
-            if (!response.ok) throw new Error('Failed to fetch products');
-            const rawData = await response.json();
-            
+            // Fetch products from Firestore
+            const rawData = await getProducts();
+
             const data = rawData.map(item => {
-                const rawPrice = item.price || "0";
+                const rawPrice = item.price || '0';
                 const parsedPrice = parseFloat(rawPrice.toString().replace(/[^0-9.]/g, ''));
                 return { ...item, price: parsedPrice };
             });
@@ -112,7 +111,6 @@ const SmartFit = () => {
 
         } catch (error) {
             console.error('Analysis failed:', error);
-            // Fallback empty recommendations or gracefully handle error
         } finally {
             setIsAnalyzing(false);
         }

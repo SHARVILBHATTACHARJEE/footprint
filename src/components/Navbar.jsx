@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, ShoppingBag } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { logoutUser } from '../firebase/auth';
 
 const Navbar = () => {
     const [isHovered, setIsHovered] = useState(false);
@@ -12,6 +13,16 @@ const Navbar = () => {
     // Check for logged-in user
     const userString = localStorage.getItem('user');
     const user = userString ? JSON.parse(userString) : null;
+
+    const handleLogout = async () => {
+        try {
+            await logoutUser();
+            localStorage.removeItem('user');
+            window.location.reload();
+        } catch (error) {
+            console.error('Logout failed', error);
+        }
+    };
 
     return (
         <motion.nav
@@ -80,9 +91,12 @@ const Navbar = () => {
                 </button>
 
                 {user ? (
-                    <div className="px-4 py-3 md:px-6 md:py-2.5 bg-black/50 backdrop-blur-xl border border-[#00ff88] text-[#00ff88] rounded-full flex items-center gap-2 text-xs md:text-sm uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(0,255,136,0.15)]">
-                        <User size={16} /> <span className="hidden md:inline">Hello, {user.firstName}</span>
-                    </div>
+                    <button 
+                        onClick={handleLogout}
+                        title="Click to Logout"
+                        className="px-4 py-3 md:px-6 md:py-2.5 bg-black/50 backdrop-blur-xl border border-[#00ff88] text-[#00ff88] rounded-full flex items-center gap-2 text-xs md:text-sm uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(0,255,136,0.15)] hover:bg-[#00ff88] hover:text-black transition-all">
+                        <User size={16} /> <span className="hidden md:inline">Logout, {user.firstName}</span>
+                    </button>
                 ) : (
                     <Link to="/login" className="px-4 py-3 md:px-6 md:py-2.5 bg-black/50 backdrop-blur-xl border border-white/10 text-white rounded-full hover:bg-white hover:text-black hover:border-white transition-all flex items-center gap-2 text-xs md:text-sm uppercase tracking-widest font-bold">
                         <User size={16} /> <span className="hidden md:inline">Sign In</span>

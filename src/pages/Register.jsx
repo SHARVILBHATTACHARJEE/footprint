@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus, ArrowRight } from 'lucide-react';
+import { registerUser, signInWithGoogle } from '../firebase/auth';
 
 const Register = () => {
     const [firstName, setFirstName] = useState('');
@@ -15,23 +16,29 @@ const Register = () => {
         e.preventDefault();
         setError('');
         try {
-            const response = await fetch('https://footprint-6e9p.onrender.com/api/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ firstName, lastName, email, password })
-            });
-            const data = await response.json();
-
-            if (response.ok) {
-                // Redirect on successful registration
-                console.log(data);
-                navigate('/login');
-            } else {
-                setError(data.error || 'Registration failed');
-            }
+            await registerUser({ firstName, lastName, email, password });
+            navigate('/login');
         } catch (err) {
             console.error('Registration error', err);
-            setError('Unable to connect to server');
+            if (err.code === 'auth/email-already-in-use') {
+                setError('An account with this email already exists.');
+            } else if (err.code === 'auth/weak-password') {
+                setError('Password should be at least 6 characters.');
+            } else {
+                setError('Registration failed. Please try again.');
+            }
+        }
+    };
+
+    const handleGoogleRegister = async () => {
+        setError('');
+        try {
+            const user = await signInWithGoogle();
+            localStorage.setItem('user', JSON.stringify(user));
+            navigate('/');
+        } catch (err) {
+            console.error('Google register error', err);
+            setError('Unable to sign in with Google. Please try again.');
         }
     };
 
@@ -125,6 +132,25 @@ const Register = () => {
                             Sign Up <ArrowRight size={20} />
                         </motion.button>
                     </form>
+
+                    <div className="relative mt-6 mb-6">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-600"></div>
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                            <span className="px-2 bg-[#050505] text-gray-400 font-mono">Or continue with</span>
+                        </div>
+                    </div>
+
+                    <motion.button
+                        onClick={handleGoogleRegister}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="w-full bg-[#111] border border-[#333] text-white font-bold uppercase tracking-widest py-4 rounded-lg flex items-center justify-center gap-3 hover:bg-[#222] transition-colors"
+                    >
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5" />
+                        Google
+                    </motion.button>
 
                     <div className="mt-8 text-center relative z-20">
                         <p className="text-gray-500 text-sm">

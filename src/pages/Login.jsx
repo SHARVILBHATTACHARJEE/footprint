@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, Lock } from 'lucide-react';
+import { loginUser, signInWithGoogle } from '../firebase/auth';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -13,24 +14,28 @@ const Login = () => {
         e.preventDefault();
         setError('');
         try {
-            const response = await fetch('https://footprint-6e9p.onrender.com/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-            const data = await response.json();
-
-            if (response.ok) {
-                // Redirect user after login
-                console.log(data);
-                localStorage.setItem('user', JSON.stringify(data.user));
-                navigate('/');
-            } else {
-                setError(data.error || 'Login failed');
-            }
+            const user = await loginUser({ email, password });
+            localStorage.setItem('user', JSON.stringify(user));
+            navigate('/');
         } catch (err) {
             console.error('Login error', err);
-            setError('Unable to connect to server');
+            if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+                setError('Invalid email or password');
+            } else {
+                setError('Unable to sign in. Please try again.');
+            }
+        }
+    };
+
+    const handleGoogleLogin = async () => {
+        setError('');
+        try {
+            const user = await signInWithGoogle();
+            localStorage.setItem('user', JSON.stringify(user));
+            navigate('/');
+        } catch (err) {
+            console.error('Google login error', err);
+            setError('Unable to sign in with Google. Please try again.');
         }
     };
 
@@ -105,6 +110,25 @@ const Login = () => {
                             Sign In <ArrowRight size={20} />
                         </motion.button>
                     </form>
+
+                    <div className="relative mt-6 mb-6">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-600"></div>
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                            <span className="px-2 bg-[#050505] text-gray-400 font-mono">Or continue with</span>
+                        </div>
+                    </div>
+
+                    <motion.button
+                        onClick={handleGoogleLogin}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="w-full bg-white text-black font-bold uppercase tracking-widest py-4 rounded-lg flex items-center justify-center gap-3 hover:bg-gray-200 transition-colors"
+                    >
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5" />
+                        Google
+                    </motion.button>
 
                     <div className="mt-8 text-center">
                         <p className="text-gray-500 text-sm">

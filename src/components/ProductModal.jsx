@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Star, ShoppingCart, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { getProductReviews, upsertReview } from '../firebase/firestore';
 
 const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
     const [reviews, setReviews] = useState([]);
@@ -23,12 +24,10 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
         const fetchReviews = async () => {
             setIsLoadingReviews(true);
             try {
-                const response = await fetch(`https://footprint-6e9p.onrender.com/api/products/${product.id}/reviews`);
-                if (!response.ok) throw new Error('Failed to fetch reviews');
-                const data = await response.json();
+                const data = await getProductReviews(product.id);
                 setReviews(data);
             } catch (error) {
-                console.error("Error fetching reviews:", error);
+                console.error('Error fetching reviews:', error);
             } finally {
                 setIsLoadingReviews(false);
             }
@@ -80,27 +79,22 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
 
         setIsSubmittingReview(true);
         try {
-            const response = await fetch(`https://footprint-6e9p.onrender.com/api/products/${product.id}/reviews`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    user_id: user.id,
-                    rating,
-                    review_text: reviewText
-                })
+            await upsertReview(product.id, {
+                user_id: user.id,
+                rating,
+                review_text: reviewText,
+                firstName: user.firstName || '',
+                lastName: user.lastName || ''
             });
 
-            if (response.ok) {
-                // Refresh reviews
-                const reviewsResponse = await fetch(`https://footprint-6e9p.onrender.com/api/products/${product.id}/reviews`);
-                const reviewsData = await reviewsResponse.json();
-                setReviews(reviewsData);
-                setReviewText('');
-                setRating(5);
-                onClose();
-            }
+            // Refresh reviews from Firestore
+            const updatedReviews = await getProductReviews(product.id);
+            setReviews(updatedReviews);
+            setReviewText('');
+            setRating(5);
+            onClose();
         } catch (error) {
-            console.error("Error submitting review:", error);
+            console.error('Error submitting review:', error);
         } finally {
             setIsSubmittingReview(false);
         }
@@ -200,7 +194,7 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
                                 ) : reviews.length > 0 ? (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         {reviews.map((review) => (
-                                            <div key={review.review_id} className="bg-[#111] p-6 rounded-xl border border-[#222] hover:border-[#333] transition-colors">
+                                            <div key={review.id || review.user_id} className="bg-[#111] p-6 rounded-xl border border-[#222] hover:border-[#333] transition-colors">
                                                 <div className="flex justify-between items-start mb-4">
                                                     <div>
                                                         <div className="font-bold text-white mb-1">{review.firstName} {review.lastName}</div>

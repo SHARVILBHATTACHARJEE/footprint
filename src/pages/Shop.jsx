@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, Loader2, Star } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import ProductModal from '../components/ProductModal';
+import { getProductsWithFeatures } from '../firebase/firestore';
+import { seedFirestore } from '../firebase/seed';
 
 const Shop = () => {
     // Determine unique filter options directly in component based on loaded data
@@ -26,28 +28,24 @@ const Shop = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await fetch('https://footprint-6e9p.onrender.com/api/products-features');
-                if (!response.ok) throw new Error('Failed to fetch products');
-                const data = await response.json();
+                const data = await getProductsWithFeatures();
 
-                // Map numeric price strings back to numbers for sorting to work cleanly
                 const formattedData = data.map(item => {
-                    const rawPrice = item.feature_price || item.price || "0";
-                    // Remove any non-numeric characters except the decimal point
+                    const rawPrice = item.feature_price || item.price || '0';
                     const parsedPrice = parseFloat(rawPrice.toString().replace(/[^0-9.]/g, ''));
-                    
+
                     return {
                         ...item,
                         image: item.image_url,
                         price: parsedPrice,
-                        walkingStyle: item.walking_style, // normalize key for frontend
-                        rating: item.avg_rating ? Number(item.avg_rating).toFixed(1) : "New"
+                        walkingStyle: item.walking_style,
+                        rating: item.avg_rating ? Number(item.avg_rating).toFixed(1) : 'New'
                     };
                 });
 
                 setProducts(formattedData);
             } catch (error) {
-                console.error("Error loading products:", error);
+                console.error('Error loading products:', error);
             } finally {
                 setIsLoading(false);
             }
@@ -266,16 +264,29 @@ const Shop = () => {
                             <span className="text-4xl mb-4">👟</span>
                             <h3 className="text-2xl font-bold uppercase mb-2">No matching pairs found</h3>
                             <p className="text-gray-500 font-mono">Try adjusting your filters to discover more gear.</p>
-                            <button
-                                onClick={() => {
-                                    setActiveCategory("All");
-                                    setActiveWalkingStyle("All");
-                                    setActiveClimate("All");
-                                }}
-                                className="mt-8 px-6 py-2 border border-[#00ff88] text-[#00ff88] rounded-full hover:bg-[#00ff88] hover:text-black transition-all font-bold uppercase tracking-widest text-sm"
-                            >
-                                Reset Filters
-                            </button>
+                            <div className="flex flex-col gap-4 mt-8">
+                                <button
+                                    onClick={() => {
+                                        setActiveCategory("All");
+                                        setActiveWalkingStyle("All");
+                                        setActiveClimate("All");
+                                    }}
+                                    className="px-6 py-2 border border-[#00ff88] text-[#00ff88] rounded-full hover:bg-[#00ff88] hover:text-black transition-all font-bold uppercase tracking-widest text-sm"
+                                >
+                                    Reset Filters
+                                </button>
+                                {products.length === 0 && (
+                                    <button
+                                        onClick={async () => {
+                                            await seedFirestore();
+                                            window.location.reload();
+                                        }}
+                                        className="px-6 py-2 bg-yellow-400 text-black border border-yellow-400 rounded-full hover:bg-yellow-500 hover:text-black transition-all font-bold uppercase tracking-widest text-sm"
+                                    >
+                                        🔧 Dev Action: Load Database Initial Items
+                                    </button>
+                                )}
+                            </div>
                         </motion.div>
                     ) : null}
                 </main>
