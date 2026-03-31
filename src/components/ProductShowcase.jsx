@@ -13,20 +13,20 @@ const ProductShowcase = () => {
 
     const products = [
         {
-            name: "Velocity Pro",
-            image: "/images/product-velocity.jpg",
+            name: "AeroSprint X",
+            image: "/images/shoes/shoe1_normal.png",
             price: "₹180",
             description: "Engineered for maximum speed."
         },
         {
-            name: "Urban Stride",
-            image: "/images/product-urban.jpg",
+            name: "Urban Walker Pro",
+            image: "/images/shoes/shoe2_normal.png",
             price: "₹145",
             description: "City aesthetics, comfort core."
         },
         {
-            name: "Flex Form",
-            image: "/images/product-flex.jpg",
+            name: "TrailBlazer GTX",
+            image: "/images/shoes/shoe3_normal.png",
             price: "₹120",
             description: "Adaptive fit for every move."
         }
@@ -48,11 +48,11 @@ const ProductShowcase = () => {
                         transition={{ duration: 0.5, delay: index * 0.1 }}
                         className="group relative flex flex-col items-center"
                     >
-                        <div className="relative w-full aspect-[4/5] overflow-hidden bg-[#111] mb-6 rounded-sm">
+                        <div className="relative w-full aspect-[5/4] overflow-hidden bg-transparent mb-6 rounded-sm flex items-center justify-center">
                             <motion.img
                                 src={product.image}
                                 alt={product.name}
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                className="w-full h-full object-contain p-4 transition-transform duration-700 group-hover:scale-110"
                                 style={{ y: index % 2 === 0 ? 0 : 20 }}
                             />
                             <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500" />

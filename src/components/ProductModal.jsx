@@ -11,6 +11,8 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
     const [rating, setRating] = useState(5);
     const [reviewText, setReviewText] = useState('');
     const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+    const [lifecycleStage, setLifecycleStage] = useState(0);
+    const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
 
     // Check for logged-in user
     const userString = localStorage.getItem('user');
@@ -49,6 +51,9 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
         } else if (isOpen) {
             setRating(5);
             setReviewText('');
+        }
+        if (isOpen) {
+            setLifecycleStage(0);
         }
     }, [existingReview, isOpen]);
 
@@ -134,11 +139,11 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
                             {/* Product Info Section */}
                             <div className="flex flex-col md:flex-row border-b border-[#333]">
                                 {/* Image Container */}
-                                <div className="w-full md:w-1/2 relative bg-[#111] min-h-[300px] md:min-h-[500px]">
+                                <div className="w-full md:w-1/2 relative bg-transparent flex items-center justify-center p-8 min-h-[300px]">
                                     <img
                                         src={product.image}
                                         alt={product.name}
-                                        className="absolute inset-0 w-full h-full object-cover"
+                                        className="max-w-full max-h-full object-contain drop-shadow-2xl"
                                     />
                                     {/* Overlay Tags */}
                                     <div className="absolute top-4 left-4 flex flex-col gap-2">
@@ -167,15 +172,26 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
                                         </p>
                                     </div>
 
-                                    <button
-                                        onClick={() => {
-                                            onAdd(product);
-                                            onClose();
-                                        }}
-                                        className="w-full flex justify-center items-center gap-3 bg-[#00ff88] hover:bg-white text-black font-bold uppercase tracking-widest py-4 rounded-sm transition-colors duration-300"
-                                    >
-                                        <ShoppingCart size={20} /> Add to Cart
-                                    </button>
+                                    <div className="flex flex-col gap-3">
+                                        <button
+                                            onClick={() => {
+                                                onAdd(product);
+                                                onClose();
+                                            }}
+                                            className="w-full flex justify-center items-center gap-3 bg-[#00ff88] hover:bg-white text-black font-bold uppercase tracking-widest py-4 rounded-sm transition-colors duration-300"
+                                        >
+                                            <ShoppingCart size={20} /> Add to Cart
+                                        </button>
+                                        
+                                        {product.lifecycle_images && (
+                                            <button
+                                                onClick={() => setIsSimulatorOpen(true)}
+                                                className="w-full flex justify-center items-center gap-3 bg-transparent border border-[#00ff88] hover:bg-[#00ff88] text-[#00ff88] hover:text-black font-bold uppercase tracking-widest py-4 rounded-sm transition-colors duration-300"
+                                            >
+                                                Simulate Lifecycle
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
 
@@ -277,6 +293,63 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
                     </motion.div>
                 </div>
             )}
+            {/* Lifecycle Simulator Popup */}
+            <AnimatePresence>
+                {isSimulatorOpen && (
+                    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 bg-black/90 backdrop-blur-sm cursor-pointer" 
+                            onClick={() => setIsSimulatorOpen(false)} 
+                        />
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="relative w-full max-w-4xl bg-[#111] border border-[#333] rounded-2xl p-8 flex flex-col items-center shadow-2xl"
+                        >
+                            <button onClick={() => setIsSimulatorOpen(false)} className="absolute top-4 right-4 text-white hover:text-[#00ff88] p-2 bg-black/50 rounded-full border border-white/10 transition-colors">
+                                <X size={20} />
+                            </button>
+                            <h3 className="text-2xl font-bold uppercase tracking-widest text-[#00ff88] mb-8">Shoe Lifecycle Simulator</h3>
+                            <div className="w-full aspect-[5/3] relative mb-8 bg-transparent rounded-xl flex items-center justify-center">
+                                <img
+                                    src={(() => {
+                                        switch(lifecycleStage) {
+                                            case 0: return product.lifecycle_images.normal;
+                                            case 1: return product.lifecycle_images.m3;
+                                            case 2: return product.lifecycle_images.m6;
+                                            case 3: return product.lifecycle_images.m12;
+                                            default: return product.image;
+                                        }
+                                    })()}
+                                    alt="Lifecycle Simulation"
+                                    className="max-w-full max-h-full object-contain transition-all duration-300 drop-shadow-2xl"
+                                />
+                            </div>
+                            <div className="w-full max-w-2xl bg-black p-6 rounded-xl border border-[#333]">
+                                <input 
+                                    type="range" 
+                                    min="0" 
+                                    max="3" 
+                                    step="1"
+                                    value={lifecycleStage}
+                                    onChange={(e) => setLifecycleStage(parseInt(e.target.value))}
+                                    className="w-full accent-[#00ff88] cursor-pointer"
+                                />
+                                <div className="flex justify-between text-xs text-gray-300 font-mono mt-4 uppercase tracking-widest">
+                                    <span className={`transition-colors ${lifecycleStage === 0 ? 'text-[#00ff88] font-bold' : ''}`}>New</span>
+                                    <span className={`transition-colors ${lifecycleStage === 1 ? 'text-[#00ff88] font-bold' : ''}`}>3 Months</span>
+                                    <span className={`transition-colors ${lifecycleStage === 2 ? 'text-[#00ff88] font-bold' : ''}`}>6 Months</span>
+                                    <span className={`transition-colors ${lifecycleStage === 3 ? 'text-[#00ff88] font-bold' : ''}`}>1 Year</span>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </AnimatePresence>
     );
 };

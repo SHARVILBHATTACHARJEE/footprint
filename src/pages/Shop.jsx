@@ -198,12 +198,12 @@ const Shop = () => {
                                             setSelectedProduct(product);
                                             setIsModalOpen(true);
                                         }}
-                                        className="relative w-full aspect-[4/5] overflow-hidden bg-[#0a0a0a] mb-6 rounded-sm cursor-pointer"
+                                        className="relative w-full aspect-[5/4] overflow-hidden bg-transparent mb-6 rounded-sm cursor-pointer flex items-center justify-center"
                                     >
                                         <img
                                             src={product.image}
                                             alt={product.name}
-                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale-[0.2] group-hover:grayscale-0"
+                                            className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 grayscale-[0.2] group-hover:grayscale-0"
                                         />
                                         <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500" />
 
