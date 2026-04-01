@@ -203,9 +203,8 @@ const Shop = () => {
                                         <img
                                             src={product.image}
                                             alt={product.name}
-                                            className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 grayscale-[0.2] group-hover:grayscale-0"
+                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale-[0.2] group-hover:grayscale-0"
                                         />
-                                        <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500" />
 
                                         {/* Hover Overlay Tags */}
                                         <div className="absolute top-4 left-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">

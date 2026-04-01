@@ -18,7 +18,7 @@ const CartSidebar = () => {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={() => setIsCartOpen(false)}
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[150]"
                     />
 
                     {/* Sidebar */}
@@ -27,7 +27,7 @@ const CartSidebar = () => {
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
                         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                        className="fixed top-0 right-0 w-full max-w-md h-full bg-[#0a0a0a] border-l border-[#333] z-50 flex flex-col text-white shadow-2xl"
+                        className="fixed top-0 right-0 w-full max-w-md h-full bg-[#0a0a0a] border-l border-[#333] z-[150] flex flex-col text-white shadow-2xl"
                     >
                         {/* Header */}
                         <div className="flex justify-between items-center px-6 py-6 border-b border-[#333]">

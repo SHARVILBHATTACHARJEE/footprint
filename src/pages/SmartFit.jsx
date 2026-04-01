@@ -2,17 +2,20 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Activity, Footprints, ThermometerSun, Leaf, Clock, Map, Zap,
-    Droplet, ArrowRight, ArrowLeft, Loader2, Sparkles, AlertCircle
+    Droplet, ArrowRight, ArrowLeft, Loader2, Sparkles, AlertCircle, ShoppingCart
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
 import { getProducts } from '../firebase/firestore';
+import ProductModal from '../components/ProductModal';
 
 const SmartFit = () => {
     const [step, setStep] = useState(1);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [recommendations, setRecommendations] = useState([]);
     const [matchScore, setMatchScore] = useState(0);
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const { addToCart } = useCart();
 
@@ -73,9 +76,15 @@ const SmartFit = () => {
             const rawData = await getProducts();
 
             const data = rawData.map(item => {
-                const rawPrice = item.price || '0';
+                const rawPrice = item.feature_price || item.price || '0';
                 const parsedPrice = parseFloat(rawPrice.toString().replace(/[^0-9.]/g, ''));
-                return { ...item, price: parsedPrice };
+                return { 
+                    ...item, 
+                    image: item.image_url,
+                    price: parsedPrice,
+                    walkingStyle: item.walking_style,
+                    rating: item.avg_rating ? Number(item.avg_rating).toFixed(1) : 'New'
+                };
             });
 
             // Artificial delay to make it feel like "analysis"
@@ -379,21 +388,33 @@ const SmartFit = () => {
                                                 key={product.id}
                                                 className="group flex flex-col"
                                             >
-                                                <div className="relative w-full aspect-[4/5] overflow-hidden bg-[#0a0a0a] mb-6 rounded-xl border border-[#333] group-hover:border-[#00ff88] transition-colors">
+                                                <div 
+                                                    onClick={() => {
+                                                        setSelectedProduct(product);
+                                                        setIsModalOpen(true);
+                                                    }}
+                                                    className="relative w-full aspect-[4/5] overflow-hidden bg-[#0a0a0a] mb-6 rounded-xl border border-[#333] group-hover:border-[#00ff88] transition-colors cursor-pointer"
+                                                >
                                                     <img
-                                                        src={product.image_url}
+                                                        src={product.image}
                                                         alt={product.name}
-                                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale-[0.2] group-hover:grayscale-0"
                                                     />
                                                     <div className="absolute top-4 right-4 bg-black/80 backdrop-blur text-[#00ff88] text-xs font-mono font-bold py-2 px-3 rounded-full border border-[#00ff88]/50">
                                                         {product.matchScore}% MATCH
                                                     </div>
                                                 </div>
 
-                                                <div className="flex flex-col gap-2 flex-grow">
-                                                    <div className="flex justify-between items-start border-b border-[#333] pb-4">
-                                                        <div>
-                                                            <h4 className="text-xl font-bold uppercase mb-1">{product.name}</h4>
+                                                <div className="flex flex-col gap-2 flex-grow w-full">
+                                                    <div className="flex justify-between items-start border-b border-[#333] pb-4 group-hover:border-[#00ff88] transition-colors duration-500">
+                                                        <div 
+                                                            className="cursor-pointer group/title"
+                                                            onClick={() => {
+                                                                setSelectedProduct(product);
+                                                                setIsModalOpen(true);
+                                                            }}
+                                                        >
+                                                            <h4 className="text-xl font-bold uppercase mb-1 group-hover/title:text-[#00ff88] transition-colors">{product.name}</h4>
                                                             <p className="text-xs text-gray-400 font-mono tracking-wider">{product.walking_style || product.category}</p>
                                                         </div>
                                                         <span className="text-xl font-bold text-[#00ff88]">₹{product.price}</span>
@@ -402,9 +423,9 @@ const SmartFit = () => {
 
                                                     <button
                                                         onClick={() => addToCart(product)}
-                                                        className="w-full mt-4 bg-[#111] hover:bg-[#00ff88] text-white hover:text-black border border-[#333] hover:border-[#00ff88] transition-all duration-300 py-3 uppercase tracking-widest font-bold text-sm"
+                                                        className="w-full mt-4 flex items-center justify-center gap-2 bg-[#111] hover:bg-[#00ff88] text-white hover:text-black border border-[#333] hover:border-[#00ff88] transition-all duration-300 py-3 uppercase tracking-widest font-bold text-sm"
                                                     >
-                                                        Add to Cart
+                                                        <ShoppingCart size={16} /> Add to Cart
                                                     </button>
                                                 </div>
                                             </motion.div>
@@ -426,6 +447,13 @@ const SmartFit = () => {
 
                 </AnimatePresence>
             </div>
+
+            <ProductModal
+                product={selectedProduct}
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onAdd={addToCart}
+            />
 
             {/* Navigation Buttons (Steps 1-4) */}
             {step < 5 && (

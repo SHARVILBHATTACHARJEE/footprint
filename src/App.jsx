@@ -1,8 +1,6 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
 import Shop from './pages/Shop';
 import SmartFit from './pages/SmartFit';
 import Compare from './pages/Compare';
@@ -22,8 +20,6 @@ function App() {
             <Route path="/shop" element={<Shop />} />
             <Route path="/smart-fit" element={<SmartFit />} />
             <Route path="/compare" element={<Compare />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
           </Routes>
         </div>
       </CartProvider>

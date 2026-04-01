@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, CreditCard, Tag, BadgePercent, ShieldCheck } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase/config';
 
 const CheckoutPopup = ({ isOpen, onClose, subtotal }) => {
     const { cartItems, clearCart, setIsCartOpen } = useCart();
@@ -69,10 +71,31 @@ const CheckoutPopup = ({ isOpen, onClose, subtotal }) => {
             description: "Footwear Purchase",
             image: "https://your-logo-url.com/logo.png", // Replace with your actual logo
             // order_id: "order_9A33XWu170gUtm", // Typically generated on the backend, skipped for frontend demo
-            handler: function (response) {
+            handler: async function (response) {
                 // Payment Success callback
                 console.log(response.razorpay_payment_id);
-                // alert(`Payment Successful! Payment ID: ${response.razorpay_payment_id}`);
+                
+                try {
+                    // Save Order to Firestore
+                    const userString = localStorage.getItem('user');
+                    const user = userString ? JSON.parse(userString) : null;
+                    
+                    if (user && user.id) {
+                        await addDoc(collection(db, 'orders'), {
+                            userId: user.id,
+                            paymentId: response.razorpay_payment_id,
+                            items: cartItems,
+                            subtotal: subtotal,
+                            discount: discount,
+                            totalAmount: totalAmount,
+                            status: 'Paid',
+                            createdAt: serverTimestamp()
+                        });
+                    }
+                } catch (error) {
+                    console.error("Error saving order: ", error);
+                }
+
                 clearCart();
                 onClose();
                 setIsCartOpen(false); // Close cart sidebar too
