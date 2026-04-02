@@ -1,8 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Star, ShoppingCart, Calendar } from 'lucide-react';
+import { X, Star, ShoppingCart, Calendar, Box } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getProductReviews, upsertReview } from '../firebase/firestore';
+import ShoeModel from './ShoeModel';
+
+const modelsMap = {
+    // Map default seed products to models
+    'Velocity Pro': '/glb_models/NIKE_AIR_MAX_90.glb',
+    'Urban Stride': '/glb_models/Nike_Air_Force.glb',
+    'Flex Form': '/glb_models/Nike_Dunk_Low.glb',
+    'Hike Master': '/glb_models/Nike_React_Infinity.glb',
+    // Also explicitly map real names in case they exist
+    'Nike Air Max 90': '/glb_models/NIKE_AIR_MAX_90.glb',
+    'Nike Air Force': '/glb_models/Nike_Air_Force.glb',
+    'Nike Dunk Low': '/glb_models/Nike_Dunk_Low.glb',
+    'Nike React Infinity': '/glb_models/Nike_React_Infinity.glb',
+};
+
+const getModelUrl = (productName) => {
+    if (!productName) return null;
+    
+    // Check partial name matches for the 4 shoes
+    const lowerName = productName.toLowerCase();
+    if (lowerName.includes('air max 90')) return '/glb_models/NIKE_AIR_MAX_90.glb';
+    if (lowerName.includes('air force')) return '/glb_models/Nike_Air_Force.glb';
+    if (lowerName.includes('dunk low')) return '/glb_models/Nike_Dunk_Low.glb';
+    if (lowerName.includes('react infinity')) return '/glb_models/Nike_React_Infinity.glb';
+    
+    // Fallback to strict map
+    return modelsMap[productName] || null;
+};
 
 const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
     const [reviews, setReviews] = useState([]);
@@ -13,6 +41,7 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
     const [isSubmittingReview, setIsSubmittingReview] = useState(false);
     const [lifecycleStage, setLifecycleStage] = useState(0);
     const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
+    const [is3dPreviewOpen, setIs3dPreviewOpen] = useState(false);
 
     // Check for logged-in user
     const userString = localStorage.getItem('user');
@@ -191,6 +220,13 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
                                                 Simulate Lifecycle
                                             </button>
                                         )}
+                                        
+                                        <button
+                                            onClick={() => setIs3dPreviewOpen(true)}
+                                            className="w-full flex justify-center items-center gap-3 bg-[#111] hover:bg-[#222] border border-[#333] text-white font-bold uppercase tracking-widest py-4 rounded-sm transition-colors duration-300"
+                                        >
+                                            <Box size={20} /> 3D Preview
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -345,6 +381,49 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
                                     <span className={`transition-colors ${lifecycleStage === 2 ? 'text-[#00ff88] font-bold' : ''}`}>6 Months</span>
                                     <span className={`transition-colors ${lifecycleStage === 3 ? 'text-[#00ff88] font-bold' : ''}`}>1 Year</span>
                                 </div>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
+            {/* 3D Preview Popup */}
+            <AnimatePresence>
+                {is3dPreviewOpen && (
+                    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 bg-black/90 backdrop-blur-sm cursor-pointer" 
+                            onClick={() => setIs3dPreviewOpen(false)} 
+                        />
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="relative w-full max-w-5xl h-[80vh] bg-[#111] border border-[#333] rounded-2xl flex flex-col shadow-2xl overflow-hidden"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <button onClick={() => setIs3dPreviewOpen(false)} className="absolute top-4 right-4 z-10 text-white hover:text-[#00ff88] p-2 bg-black/50 rounded-full border border-white/10 transition-colors">
+                                <X size={20} />
+                            </button>
+                            <div className="p-8 border-b border-[#333] shrink-0 bg-[#0a0a0a]">
+                                <h3 className="text-2xl font-bold uppercase tracking-widest text-[#00ff88]">3D Product Preview</h3>
+                                <p className="text-sm text-gray-400 font-mono mt-2">Drag to rotate • Scroll to zoom</p>
+                            </div>
+                            <div className="flex-grow w-full relative bg-gradient-to-b from-[#1a1a1a] to-[#0a0a0a]">
+                                {getModelUrl(product.name) ? (
+                                    <ShoeModel url={getModelUrl(product.name)} />
+                                ) : (
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8 bg-[#0a0a0a]">
+                                        <Box size={48} className="text-[#333] mb-4" />
+                                        <h4 className="text-xl font-bold uppercase text-white tracking-widest mb-2">3D Model Not Yet Created</h4>
+                                        <p className="text-gray-500 font-mono text-sm max-w-sm">
+                                            The interactive 3D preview for {product.name} is currently in development. Please check back later.
+                                        </p>
+                                    </div>
+                                )}
                             </div>
                         </motion.div>
                     </div>

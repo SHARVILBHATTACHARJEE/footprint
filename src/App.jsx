@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Shop from './pages/Shop';
 import SmartFit from './pages/SmartFit';
 import Compare from './pages/Compare';
+import SoleSizeDetector from './pages/SoleSizeDetector';
 import Navbar from './components/Navbar';
 import CartSidebar from './components/CartSidebar';
 import { CartProvider } from './context/CartContext';
@@ -20,6 +21,7 @@ function App() {
             <Route path="/shop" element={<Shop />} />
             <Route path="/smart-fit" element={<SmartFit />} />
             <Route path="/compare" element={<Compare />} />
+            <Route path="/sole-detector" element={<SoleSizeDetector />} />
           </Routes>
         </div>
       </CartProvider>

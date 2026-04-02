@@ -69,6 +69,7 @@ const Navbar = () => {
                                 <Link to="/shop" className={`transition-colors ${location.pathname === '/shop' ? 'text-[#00ff88]' : 'text-gray-400 hover:text-white'}`}>Shop</Link>
                                 <Link to="/compare" className={`transition-colors ${location.pathname === '/compare' ? 'text-[#00ff88]' : 'text-gray-400 hover:text-white'}`}>Compare</Link>
                                 <Link to="/smart-fit" className={`transition-colors ${location.pathname === '/smart-fit' ? 'text-[#00ff88]' : 'text-gray-400 hover:text-white'}`}>Smart Fit™</Link>
+                                <Link to="/sole-detector" className={`transition-colors ${location.pathname === '/sole-detector' ? 'text-[#00ff88]' : 'text-gray-400 hover:text-white'}`}>Size AI</Link>
                             </motion.div>
                         )}
                     </AnimatePresence>
