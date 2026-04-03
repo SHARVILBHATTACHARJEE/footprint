@@ -17,7 +17,7 @@ function Model({ url }) {
 
 export default function ShoeModel({ url }) {
     return (
-        <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
+        <Canvas camera={{ position: [0, 0, 3], fov: 45 }}>
             <ambientLight intensity={0.5} />
             <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
             <Environment preset="city" />
@@ -25,7 +25,7 @@ export default function ShoeModel({ url }) {
                 <Model url={url} />
                 <ContactShadows position={[0, -1, 0]} opacity={0.5} scale={10} blur={2} far={4} />
             </React.Suspense>
-            <OrbitControls autoRotate autoRotateSpeed={2} enablePan={false} enableZoom={true} minDistance={2} maxDistance={10} minPolarAngle={0} maxPolarAngle={Math.PI / 2 + 0.2} />
+            <OrbitControls autoRotate autoRotateSpeed={2} enablePan={false} enableZoom={true} minDistance={1.5} maxDistance={10} minPolarAngle={0} maxPolarAngle={Math.PI / 2 + 0.2} />
         </Canvas>
     );
 }
