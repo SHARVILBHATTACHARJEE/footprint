@@ -47,69 +47,36 @@ const FootHealth = () => {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8 }}
-                        className="relative h-[600px] w-full bg-black/50 border border-[#222] rounded-2xl p-8 flex items-center justify-center overflow-hidden"
+                        className="relative h-[400px] md:h-[600px] w-full bg-black/50 border border-[#222] rounded-2xl p-4 md:p-8 flex items-center justify-center overflow-hidden"
                     >
                         {/* Abstract Foot Visualization SVG */}
                         <svg viewBox="0 0 200 300" className="w-auto h-full drop-shadow-[0_0_15px_rgba(0,255,136,0.3)] z-10">
+                            {/* Static Stylized Outline */}
                             <motion.path
                                 d="M100 30 C80 30, 50 50, 50 100 C50 150, 60 200, 70 230 C80 250, 90 270, 100 280 C110 270, 120 250, 130 230 C140 200, 150 150, 150 100 C150 50, 120 30, 100 30 Z"
-                                fill="none"
-                                stroke="#333"
-                                strokeWidth="2"
-                                initial={{ pathLength: 0 }}
-                                whileInView={{ pathLength: 1 }}
-                                transition={{ duration: 2, ease: "easeInOut" }}
-                            />
-
-                            {/* Moving Gait Particle */}
-                            <motion.circle
-                                r="6"
-                                fill="#fff"
-                                className="drop-shadow-[0_0_15px_#fff]"
-                                animate={{
-                                    cx: [80, 100, 110], // Heel -> Arch -> Toe
-                                    cy: [120, 180, 220],
-                                    opacity: [0, 1, 1, 0], // Fade in/out
-                                    scale: [1, 1.5, 0.5]
-                                }}
-                                transition={{
-                                    duration: 2,
-                                    repeat: Infinity,
-                                    ease: "easeInOut",
-                                    repeatDelay: 0.5
-                                }}
-                            />
-
-                            {/* Connecting Path for Gait */}
-                            <motion.path
-                                d="M80 120 Q 100 180 110 220"
-                                fill="none"
+                                fill="rgba(0,255,136,0.02)"
                                 stroke="#00ff88"
-                                strokeWidth="2"
-                                strokeDasharray="4 4"
-                                opacity="0.5"
+                                strokeWidth="1"
+                                initial={{ opacity: 0 }}
+                                whileInView={{ opacity: 1 }}
+                                transition={{ duration: 1.5 }}
                             />
 
-                            {/* Animated Pressure Points with Labels */}
+                            {/* Simplified Animated Pressure Points Default */}
                             {[
-                                { cx: 80, cy: 120, label: "Heel Strike" },
-                                { cx: 120, cy: 120, label: "Midfoot" },
-                                { cx: 100, cy: 180, label: "Arch Support" },
-                                { cx: 90, cy: 220, label: "Forefoot" },
-                                { cx: 110, cy: 220, label: "Toe Off" }
+                                { cx: 80, cy: 120, label: "Heel Strike", delay: 0 },
+                                { cx: 100, cy: 180, label: "Arch Support", delay: 0.5 },
+                                { cx: 100, cy: 230, label: "Forefoot", delay: 1 }
                             ].map((point, i) => (
                                 <g key={i}>
                                     <motion.circle
                                         cx={point.cx}
                                         cy={point.cy}
-                                        r="4"
+                                        r="6"
                                         fill="#00ff88"
-                                        initial={{ scale: 0, opacity: 0 }}
-                                        whileInView={{ scale: [1, 1.5, 1], opacity: 1 }}
-                                        transition={{
-                                            scale: { duration: 1.5, repeat: Infinity, delay: i * 0.3 },
-                                            opacity: { duration: 0.5, delay: i * 0.2 }
-                                        }}
+                                        initial={{ opacity: 0.3, scale: 0.8 }}
+                                        animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }}
+                                        transition={{ duration: 3, repeat: Infinity, delay: point.delay, ease: "easeInOut" }}
                                     />
                                 </g>
                             ))}
@@ -119,10 +86,8 @@ const FootHealth = () => {
                         <div className="absolute inset-0 z-20 pointer-events-none">
                             {[
                                 { top: '38%', left: '25%', text: "Heel Strike" },
-                                { top: '38%', right: '25%', text: "Midfoot" },
-                                { top: '58%', left: '50%', text: "Arch Support", transform: "translateX(-50%)" },
-                                { top: '72%', left: '28%', text: "Forefoot" },
-                                { top: '72%', right: '28%', text: "Toe Off" }
+                                { top: '55%', left: '50%', text: "Arch Support", transform: "translateX(-50%)" },
+                                { top: '75%', left: '35%', text: "Forefoot" }
                             ].map((label, i) => (
                                 <motion.div
                                     key={i}
@@ -135,19 +100,12 @@ const FootHealth = () => {
                                     }}
                                     initial={{ opacity: 0, y: 10 }}
                                     whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 1 + i * 0.2 }}
+                                    transition={{ delay: 0.5 + i * 0.2 }}
                                 >
                                     {label.text}
                                 </motion.div>
                             ))}
                         </div>
-
-                        {/* Scanner Line */}
-                        <motion.div
-                            className="absolute top-0 left-0 w-full h-[2px] bg-[#00ff88] shadow-[0_0_20px_#00ff88] will-change-transform"
-                            animate={{ y: [0, 600, 0] }}
-                            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                        />
                     </motion.div>
 
                     {/* Benefit Cards */}

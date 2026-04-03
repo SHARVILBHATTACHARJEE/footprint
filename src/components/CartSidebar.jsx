@@ -9,6 +9,7 @@ const CartSidebar = () => {
     const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
     return (
+        <>
         <AnimatePresence>
             {isCartOpen && (
                 <>
@@ -105,7 +106,10 @@ const CartSidebar = () => {
                                     <span className="text-2xl font-bold uppercase tracking-tighter">₹{cartTotal}</span>
                                 </div>
                                 <button
-                                    onClick={() => setIsCheckoutOpen(true)}
+                                    onClick={() => {
+                                        setIsCartOpen(false);
+                                        setIsCheckoutOpen(true);
+                                    }}
                                     className="w-full bg-white text-black font-bold uppercase tracking-widest py-4 rounded-full hover:bg-[#00ff88] transition-colors duration-300"
                                 >
                                     Proceed to Checkout
@@ -114,15 +118,17 @@ const CartSidebar = () => {
                         )}
                     </motion.div>
 
-                    {/* Checkout Popup */}
-                    <CheckoutPopup 
-                        isOpen={isCheckoutOpen} 
-                        onClose={() => setIsCheckoutOpen(false)} 
-                        subtotal={cartTotal}
-                    />
                 </>
             )}
         </AnimatePresence>
+
+        {/* Checkout Popup */}
+        <CheckoutPopup 
+            isOpen={isCheckoutOpen} 
+            onClose={() => setIsCheckoutOpen(false)} 
+            subtotal={cartTotal}
+        />
+        </>
     );
 };
 

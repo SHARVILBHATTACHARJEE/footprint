@@ -112,7 +112,7 @@ const Shop = () => {
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="text-[4rem] md:text-[5rem] font-bold uppercase tracking-tighter leading-none"
+                        className="text-5xl sm:text-[4rem] md:text-[5rem] font-bold uppercase tracking-tighter leading-none"
                     >
                         Collection
                     </motion.h1>

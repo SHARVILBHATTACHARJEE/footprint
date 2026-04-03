@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Package, Loader, CheckCircle2 } from 'lucide-react';
+import { X, Package, Loader, CheckCircle2, Truck } from 'lucide-react';
 import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
@@ -8,6 +8,16 @@ const OrdersPopup = ({ isOpen, onClose }) => {
     const [orders, setOrders] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
+    const [trackingOrder, setTrackingOrder] = useState(null);
+
+    const STAGES = [
+        "Order Confirmed",
+        "Processing (Picking + Packing)",
+        "Shipped / Assigned Rider",
+        "Out for Delivery",
+        "Near You",
+        "Delivered"
+    ];
 
     useEffect(() => {
         if (isOpen) {
@@ -158,9 +168,17 @@ const OrdersPopup = ({ isOpen, onClose }) => {
                                         ))}
                                     </div>
                                     
-                                    <div className="mt-6 pt-4 border-t border-[#333] flex justify-between items-center">
-                                        <span className="text-gray-400 uppercase tracking-widest text-xs font-bold">Total Paid</span>
-                                        <span className="text-2xl font-black text-white">₹{order.totalAmount?.toFixed(2)}</span>
+                                    <div className="mt-6 pt-4 border-t border-[#333] flex justify-between items-center flex-wrap gap-4">
+                                        <div className="flex gap-4 items-center">
+                                            <span className="text-gray-400 uppercase tracking-widest text-xs font-bold">Total Paid</span>
+                                            <span className="text-2xl font-black text-white">₹{order.totalAmount?.toFixed(2)}</span>
+                                        </div>
+                                        <button 
+                                            onClick={() => setTrackingOrder(order)}
+                                            className="bg-[#00ff88]/10 text-[#00ff88] hover:bg-[#00ff88]/20 border border-[#00ff88]/30 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-2"
+                                        >
+                                            <Truck size={16} /> Track Order
+                                        </button>
                                     </div>
                                 </div>
                             ))
@@ -168,6 +186,108 @@ const OrdersPopup = ({ isOpen, onClose }) => {
                     </div>
                 </motion.div>
             </motion.div>
+
+            {/* Tracking Modal Overlay */}
+            <AnimatePresence>
+                {trackingOrder && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.95, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.95, y: 20 }}
+                            className="bg-[#111] border border-[#333] w-full max-w-4xl rounded-2xl p-6 md:p-8 relative shadow-[0_0_40px_rgba(0,255,136,0.1)] max-h-[90vh] flex flex-col"
+                        >
+                            <button 
+                                onClick={() => setTrackingOrder(null)}
+                                className="absolute top-5 right-5 text-gray-500 hover:text-white z-10 bg-[#111] p-1 rounded-full"
+                            >
+                                <X size={20} />
+                            </button>
+                            <div className="shrink-0">
+                                <h3 className="text-xl font-black uppercase text-white mb-6 flex items-center gap-3 border-b border-[#222] pb-4">
+                                    <Truck className="text-[#00ff88]" size={24} /> Tracking Details
+                                </h3>
+                            </div>
+
+                            <div className="overflow-y-auto scrollbar-hide flex-1 pt-2 pr-2">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    {/* Left Side: Order Details */}
+                                    <div className="bg-[#1a1a1a] rounded-xl p-5 border border-[#222] h-fit shadow-lg">
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div>
+                                                <p className="text-[10px] text-gray-500 font-mono uppercase tracking-widest mb-1">Order ID</p>
+                                                <p className="font-mono text-white text-xs">{trackingOrder.id}</p>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-[10px] text-gray-500 font-mono uppercase tracking-widest mb-1">Total</p>
+                                                <p className="font-bold text-[#00ff88] text-sm">₹{trackingOrder.totalAmount?.toFixed(2)}</p>
+                                            </div>
+                                        </div>
+                                        <div className="border-t border-[#333] pt-4 mb-4">
+                                            <p className="text-[10px] text-gray-500 font-mono uppercase tracking-widest mb-1">Date of Order</p>
+                                            <p className="text-white text-xs font-bold">
+                                                {trackingOrder.createdAt ? new Date(trackingOrder.createdAt.toMillis()).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit' }) : 'Processing...'}
+                                            </p>
+                                        </div>
+                                        <div className="border-t border-[#333] pt-4 mb-4">
+                                            <p className="text-[10px] text-gray-500 font-mono uppercase tracking-widest mb-2">Delivery Address</p>
+                                            <p className="text-white text-xs font-bold">{trackingOrder.receiverName}</p>
+                                            <p className="text-gray-400 text-xs mt-1 leading-relaxed">{trackingOrder.deliveryAddress}</p>
+                                        </div>
+                                        <div className="border-t border-[#333] pt-4">
+                                            <p className="text-[10px] text-gray-500 font-mono uppercase tracking-widest mb-2">Items</p>
+                                            <div className="flex gap-2 flex-wrap">
+                                                {trackingOrder.items?.map((item, idx) => (
+                                                    <div key={idx} className="flex gap-3 items-center bg-black p-2 rounded-lg border border-[#333] pr-4 relative group">
+                                                        <div className="w-10 h-10 rounded overflow-hidden shrink-0">
+                                                            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-xs text-white font-bold max-w-[120px] truncate">{item.name}</p>
+                                                            <p className="text-[10px] text-gray-500 font-mono mt-0.5">Qty: {item.quantity}</p>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Right Side: Tracking Stages */}
+                                    <div className="bg-[#1a1a1a] rounded-xl p-6 border border-[#222] shadow-lg">
+                                        <p className="text-[10px] text-gray-500 font-mono uppercase tracking-widest mb-6">Delivery Status</p>
+                                        <div className="relative border-l-2 border-[#333] ml-4 space-y-8 pb-4">
+                                            {STAGES.map((stage, idx) => {
+                                                const currentStage = trackingOrder.trackingStage || 0;
+                                                const isCompleted = idx <= currentStage;
+                                                const isActive = idx === currentStage;
+                                                return (
+                                                    <div key={idx} className="relative pl-8">
+                                                        <div className={`absolute -left-[9px] top-0.5 w-4 h-4 rounded-full border-4 border-[#1a1a1a] ${isCompleted ? 'bg-[#00ff88] shadow-[0_0_15px_rgba(0,255,136,0.8)]' : 'bg-[#444]'}`}></div>
+                                                        <h4 className={`text-sm tracking-widest uppercase font-bold relative -top-1 ${isActive ? 'text-[#00ff88]' : isCompleted ? 'text-white' : 'text-gray-600'}`}>{stage}</h4>
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="shrink-0 mt-6 pt-4 border-t border-[#222]">
+                                <button 
+                                    onClick={() => setTrackingOrder(null)}
+                                    className="w-full bg-[#222] hover:bg-[#333] text-white uppercase tracking-widest text-xs font-bold py-3 rounded-lg transition-colors border border-[#333]"
+                                >
+                                    Close Tracker
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </AnimatePresence>
     );
 };

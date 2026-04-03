@@ -15,10 +15,7 @@ const Home = () => {
             <FootHealth />
 
 
-            {/* Simple Footer */}
-            <footer className="w-full py-12 text-center text-gray-800 uppercase text-xs tracking-[0.5em] bg-black border-t border-[#111]">
-                Footprint © 2026 // Future Steps
-            </footer>
+
         </div>
     );
 };

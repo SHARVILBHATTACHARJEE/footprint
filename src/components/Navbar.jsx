@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, ShoppingBag } from 'lucide-react';
+import { User, ShoppingBag, Home as HomeIcon, Store, Zap, ScanLine } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { logoutUser } from '../firebase/auth';
 import AuthPopup from './AuthPopup';
@@ -42,8 +42,8 @@ const Navbar = () => {
             {/* Left Spacer to maintain flex layout for the right items */}
             <div className="w-1/4"></div>
 
-            {/* Center - Expanding Logo Menu */}
-            <div className="absolute left-1/2 -translate-x-1/2 pointer-events-auto z-50 flex justify-center max-w-[90vw]">
+            {/* Center - Expanding Logo Menu (Desktop Only) */}
+            <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 pointer-events-auto z-50 justify-center max-w-[90vw]">
                 <motion.div
                     layout
                     onHoverStart={() => setIsHovered(true)}
@@ -159,6 +159,33 @@ const Navbar = () => {
                 )}
             </div>
         </motion.nav>
+
+        {/* Mobile Navbar / Tab Bar */}
+        <div className="md:hidden fixed bottom-0 left-0 w-full bg-[#050505]/90 backdrop-blur-2xl border-t border-[#333] z-[100] flex justify-around items-center py-3 pb-safe z-[100]">
+            <Link to="/" className={`flex flex-col items-center gap-1 ${location.pathname === '/' ? 'text-[#00ff88]' : 'text-gray-500 hover:text-white transition-colors'}`}>
+                <HomeIcon size={20} />
+                <span className="text-[10px] uppercase tracking-widest font-bold">Home</span>
+            </Link>
+            <Link to="/shop" className={`flex flex-col items-center gap-1 ${location.pathname === '/shop' ? 'text-[#00ff88]' : 'text-gray-500 hover:text-white transition-colors'}`}>
+                <Store size={20} />
+                <span className="text-[10px] uppercase tracking-widest font-bold">Shop</span>
+            </Link>
+            <Link to="/smart-fit" className={`flex flex-col items-center gap-1 ${location.pathname === '/smart-fit' ? 'text-[#00ff88]' : 'text-gray-500 hover:text-white transition-colors'}`}>
+                <Zap size={20} />
+                <span className="text-[10px] uppercase tracking-widest font-bold">Fit AI</span>
+            </Link>
+            <Link to="/sole-detector" className={`flex flex-col items-center gap-1 ${location.pathname === '/sole-detector' ? 'text-[#00ff88]' : 'text-gray-500 hover:text-white transition-colors'}`}>
+                <ScanLine size={20} />
+                <span className="text-[10px] uppercase tracking-widest font-bold">Size AI</span>
+            </Link>
+        </div>
+
+        {/* Adjusting body padding to avoid content overlapping behind mobile bar */}
+        <style dangerouslySetInnerHTML={{__html: `
+            @media (max-width: 768px) {
+                body { padding-bottom: 80px; }
+            }
+        `}} />
         <AuthPopup isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
         <ProfilePopup isOpen={isProfilePopupOpen} onClose={() => setIsProfilePopupOpen(false)} />
         <OrdersPopup isOpen={isOrdersPopupOpen} onClose={() => setIsOrdersPopupOpen(false)} />

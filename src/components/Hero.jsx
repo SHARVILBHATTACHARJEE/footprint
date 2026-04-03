@@ -58,13 +58,13 @@ const Hero = () => {
             <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 z-10 relative h-full items-center">
 
                 {/* Left Content */}
-                <div className="flex flex-col space-y-8">
+                <div className="flex flex-col space-y-6 md:space-y-8 mt-[10vh] md:mt-0 text-center md:text-left items-center md:items-start z-20">
                     <motion.div
                         variants={containerVariant}
                         initial="visible"
                         animate="visible"
                     >
-                        <h1 className="text-[5rem] md:text-[7rem] font-bold leading-[0.9] tracking-tighter uppercase font-sans relative">
+                        <h1 className="text-[4rem] sm:text-[5rem] md:text-[7rem] font-bold leading-[0.9] tracking-tighter uppercase font-sans relative">
                             <span className="block">
                                 <motion.span variants={letterVariant} className="inline-block bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
                                     The
@@ -86,7 +86,7 @@ const Hero = () => {
                     <motion.p
                         initial={{ opacity: 1, y: 0 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="text-gray-400 text-xl max-w-md font-light"
+                        className="text-gray-400 text-lg md:text-xl max-w-md font-light text-center md:text-left"
                     >
                         Experience the next generation of biomechanical footwear. Designed for kinetic perfection.
                     </motion.p>
@@ -109,14 +109,14 @@ const Hero = () => {
 
                 {/* Right Image (Parallax) */}
                 <motion.div
-                    style={{ rotateX, rotateY, z: 100 }}
-                    className="relative w-full h-[60vh] flex items-center justify-center pointer-events-none"
+                    style={{ rotateX, rotateY, z: 10 }}
+                    className="relative w-full h-[40vh] md:h-[60vh] flex items-center justify-center pointer-events-none mt-[-5vh] md:mt-0"
                 >
                     <motion.div
                         initial={{ opacity: 1, scale: 1, rotate: -15 }}
                         animate={{ opacity: 1, scale: 1, rotate: -15 }}
                         transition={{ duration: 1.5, ease: "easeOut" }}
-                        className="relative w-[80%] aspect-square"
+                        className="relative w-[70%] md:w-[80%] aspect-square"
                     >
                         {/* Image Glow */}
                         <div className="absolute inset-0 bg-gradient-to-t from-[#00ff88]/30 to-transparent rounded-full blur-3xl opacity-50 transform translate-y-20 scale-90" />

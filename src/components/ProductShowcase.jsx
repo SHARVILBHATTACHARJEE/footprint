@@ -52,7 +52,7 @@ const ProductShowcase = () => {
 
     return (
         <div ref={containerRef} className="relative w-full min-h-screen bg-black text-white py-24 px-8 overflow-hidden z-20">
-            <h2 className="text-[4rem] md:text-[6rem] font-bold uppercase text-center mb-24 relative z-10">
+            <h2 className="text-5xl sm:text-[4rem] md:text-[6rem] font-bold uppercase text-center mb-16 md:mb-24 relative z-10">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">Smart Collection</span>
             </h2>
 
