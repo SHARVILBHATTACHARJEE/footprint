@@ -16,17 +16,27 @@ const modelsMap = {
     'Nike Air Force': '/glb_models/Nike_Air_Force.glb',
     'Nike Dunk Low': '/glb_models/Nike_Dunk_Low.glb',
     'Nike React Infinity': '/glb_models/Nike_React_Infinity.glb',
+    'Adidas Forum Low': '/glb_models/Addidas_Forum_Low.glb',
+    'Adidas Ultraboost 22': '/glb_models/Addidas_Ultraboost.glb',
+    'Adidas NMD_R1': '/glb_models/Adidas_NMD_R1.glb',
+    'Adidas Superstar': '/glb_models/Adidas_Superstar.glb',
+    'Air Jordan 1 Retro High OG': '/glb_models/Air_Jordan_1_Retro_HIGH.glb',
 };
 
 const getModelUrl = (productName) => {
     if (!productName) return null;
     
-    // Check partial name matches for the 4 shoes
+    // Check partial name matches
     const lowerName = productName.toLowerCase();
     if (lowerName.includes('air max 90')) return '/glb_models/NIKE_AIR_MAX_90.glb';
     if (lowerName.includes('air force')) return '/glb_models/Nike_Air_Force.glb';
     if (lowerName.includes('dunk low')) return '/glb_models/Nike_Dunk_Low.glb';
     if (lowerName.includes('react infinity')) return '/glb_models/Nike_React_Infinity.glb';
+    if (lowerName.includes('forum low')) return '/glb_models/Addidas_Forum_Low.glb';
+    if (lowerName.includes('ultraboost')) return '/glb_models/Addidas_Ultraboost.glb';
+    if (lowerName.includes('nmd_r1')) return '/glb_models/Adidas_NMD_R1.glb';
+    if (lowerName.includes('superstar')) return '/glb_models/Adidas_Superstar.glb';
+    if (lowerName.includes('jordan 1')) return '/glb_models/Air_Jordan_1_Retro_HIGH.glb';
     
     // Fallback to strict map
     return modelsMap[productName] || null;

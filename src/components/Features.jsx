@@ -87,25 +87,6 @@ const Features = () => {
                                 <span className="text-3xl font-bold">CORE</span>
                                 <span className="text-[10px] tracking-widest opacity-70">ACTIVE</span>
                             </div>
-
-                            {/* Floating Particles around Core */}
-                            {[...Array(6)].map((_, i) => (
-                                <motion.div
-                                    key={i}
-                                    className="absolute w-2 h-2 bg-[#00ff88] rounded-full"
-                                    animate={{
-                                        x: Math.cos(i * 60 * (Math.PI / 180)) * 60,
-                                        y: Math.sin(i * 60 * (Math.PI / 180)) * 60,
-                                        opacity: [0, 1, 0],
-                                    }}
-                                    transition={{
-                                        duration: 2,
-                                        repeat: Infinity,
-                                        delay: i * 0.2,
-                                        ease: "easeInOut",
-                                    }}
-                                />
-                            ))}
                         </motion.div>
 
                         {/* Floating Data Points */}

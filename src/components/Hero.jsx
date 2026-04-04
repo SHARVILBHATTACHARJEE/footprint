@@ -127,11 +127,6 @@ const Hero = () => {
                             alt="Future Shoe"
                             className="w-full h-full object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-20 relative"
                         />
-
-                        {/* Floating Elements / Particles */}
-                        <FloatingParticle delay={0.2} x={-50} y={-100} />
-                        <FloatingParticle delay={0.5} x={150} y={-50} />
-                        <FloatingParticle delay={0.8} x={-100} y={100} />
                     </motion.div>
                 </motion.div>
 
@@ -149,23 +144,5 @@ const Hero = () => {
         </div>
     );
 };
-
-const FloatingParticle = ({ delay, x, y }) => (
-    <motion.div
-        className="absolute w-3 h-3 bg-white rounded-full blur-[1px] opacity-60 z-30"
-        initial={{ x, y, scale: 0 }}
-        animate={{
-            y: [y, y - 20, y],
-            opacity: [0.6, 0.3, 0.6],
-            scale: [1, 1.2, 1]
-        }}
-        transition={{
-            delay,
-            duration: 4,
-            repeat: Infinity,
-            ease: "easeInOut"
-        }}
-    />
-);
 
 export default Hero;

@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Activity, Footprints, ThermometerSun, Leaf, Clock, Map, Zap,
-    Droplet, ArrowRight, ArrowLeft, Loader2, Sparkles, AlertCircle, ShoppingCart
+    Droplet, ArrowRight, ArrowLeft, Loader2, Sparkles, AlertCircle, ShoppingCart,
+    Sun, Snowflake, CloudRain, Building, Home, Mountain, Grid,
+    Shrink, Maximize2, MoveHorizontal, Minus, ChevronUp, Check,
+    ArrowUp, ArrowDownRight, ArrowDownLeft, FastForward, Shuffle, Flame, Calendar, CalendarDays, Timer
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
@@ -230,18 +233,18 @@ const SmartFit = () => {
                             <div className="mb-12">
                                 <h3 className="text-lg font-mono mb-6 text-gray-300">What is your foot width?</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <OptionCard label="Narrow" value="narrow" current={answers.footWidth} groupName="footWidth" icon={Footprints} />
-                                    <OptionCard label="Medium" value="medium" current={answers.footWidth} groupName="footWidth" icon={Footprints} />
-                                    <OptionCard label="Wide" value="wide" current={answers.footWidth} groupName="footWidth" icon={Footprints} />
+                                    <OptionCard label="Narrow" value="narrow" current={answers.footWidth} groupName="footWidth" icon={Shrink} />
+                                    <OptionCard label="Medium" value="medium" current={answers.footWidth} groupName="footWidth" icon={MoveHorizontal} />
+                                    <OptionCard label="Wide" value="wide" current={answers.footWidth} groupName="footWidth" icon={Maximize2} />
                                 </div>
                             </div>
 
                             <div>
                                 <h3 className="text-lg font-mono mb-6 text-gray-300">What is your arch type?</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <OptionCard label="Flat / Low" value="flat" current={answers.archType} groupName="archType" icon={Footprints} />
-                                    <OptionCard label="Normal" value="normal" current={answers.archType} groupName="archType" icon={Footprints} />
-                                    <OptionCard label="High Arch" value="high" current={answers.archType} groupName="archType" icon={Footprints} />
+                                    <OptionCard label="Flat / Low" value="flat" current={answers.archType} groupName="archType" icon={Minus} />
+                                    <OptionCard label="Normal" value="normal" current={answers.archType} groupName="archType" icon={Check} />
+                                    <OptionCard label="High Arch" value="high" current={answers.archType} groupName="archType" icon={ChevronUp} />
                                 </div>
                             </div>
                         </motion.div>
@@ -262,9 +265,9 @@ const SmartFit = () => {
                             <div className="mb-12">
                                 <h3 className="text-lg font-mono mb-6 text-gray-300">How would you describe your gait?</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <OptionCard label="Neutral" value="neutral" current={answers.gaitType} groupName="gaitType" icon={Footprints} description="Even weight distribution" />
-                                    <OptionCard label="Pronation" value="pronation" current={answers.gaitType} groupName="gaitType" icon={Footprints} description="Foot rolls inward" />
-                                    <OptionCard label="Supination" value="supination" current={answers.gaitType} groupName="gaitType" icon={Footprints} description="Foot rolls outward" />
+                                    <OptionCard label="Neutral" value="neutral" current={answers.gaitType} groupName="gaitType" icon={ArrowUp} description="Even weight distribution" />
+                                    <OptionCard label="Pronation" value="pronation" current={answers.gaitType} groupName="gaitType" icon={ArrowDownLeft} description="Foot rolls inward" />
+                                    <OptionCard label="Supination" value="supination" current={answers.gaitType} groupName="gaitType" icon={ArrowDownRight} description="Foot rolls outward" />
                                 </div>
                             </div>
 
@@ -272,9 +275,9 @@ const SmartFit = () => {
                                 <h3 className="text-lg font-mono mb-6 text-gray-300">What's your primary activity?</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                     <OptionCard label="Daily Walking" value="walking" current={answers.activity} groupName="activity" icon={Footprints} />
-                                    <OptionCard label="Running" value="running" current={answers.activity} groupName="activity" icon={Activity} />
-                                    <OptionCard label="Standing" value="standing" current={answers.activity} groupName="activity" icon={Footprints} />
-                                    <OptionCard label="Mixed" value="mixed" current={answers.activity} groupName="activity" icon={Activity} />
+                                    <OptionCard label="Running" value="running" current={answers.activity} groupName="activity" icon={FastForward} />
+                                    <OptionCard label="Standing" value="standing" current={answers.activity} groupName="activity" icon={Home} />
+                                    <OptionCard label="Mixed" value="mixed" current={answers.activity} groupName="activity" icon={Shuffle} />
                                 </div>
                             </div>
                         </motion.div>
@@ -295,20 +298,20 @@ const SmartFit = () => {
                             <div className="mb-12">
                                 <h3 className="text-lg font-mono mb-6 text-gray-300">What's your typical climate?</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                    <OptionCard label="Hot & Dry" value="hot" current={answers.climate} groupName="climate" icon={ThermometerSun} />
+                                    <OptionCard label="Hot & Dry" value="hot" current={answers.climate} groupName="climate" icon={Sun} />
                                     <OptionCard label="Humid" value="humid" current={answers.climate} groupName="climate" icon={Droplet} />
-                                    <OptionCard label="Cold" value="cold" current={answers.climate} groupName="climate" icon={ThermometerSun} />
-                                    <OptionCard label="Rainy" value="wet" current={answers.climate} groupName="climate" icon={Droplet} />
+                                    <OptionCard label="Cold" value="cold" current={answers.climate} groupName="climate" icon={Snowflake} />
+                                    <OptionCard label="Rainy" value="wet" current={answers.climate} groupName="climate" icon={CloudRain} />
                                 </div>
                             </div>
 
                             <div>
                                 <h3 className="text-lg font-mono mb-6 text-gray-300">What surfaces do you typically walk on? (Select all)</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <CheckboxCard label="Concrete / City" value="concrete" arrayValue={answers.surfaces} groupName="surfaces" icon={Map} />
-                                    <CheckboxCard label="Carpet / Indoors" value="carpet" arrayValue={answers.surfaces} groupName="surfaces" />
-                                    <CheckboxCard label="Trails / Off-road" value="trails" arrayValue={answers.surfaces} groupName="surfaces" icon={Leaf} />
-                                    <CheckboxCard label="Tile / Hardwood" value="tiles" arrayValue={answers.surfaces} groupName="surfaces" />
+                                    <CheckboxCard label="Concrete / City" value="concrete" arrayValue={answers.surfaces} groupName="surfaces" icon={Building} />
+                                    <CheckboxCard label="Carpet / Indoors" value="carpet" arrayValue={answers.surfaces} groupName="surfaces" icon={Home} />
+                                    <CheckboxCard label="Trails / Off-road" value="trails" arrayValue={answers.surfaces} groupName="surfaces" icon={Mountain} />
+                                    <CheckboxCard label="Tile / Hardwood" value="tiles" arrayValue={answers.surfaces} groupName="surfaces" icon={Grid} />
                                 </div>
                             </div>
                         </motion.div>
@@ -329,18 +332,18 @@ const SmartFit = () => {
                             <div className="mb-12">
                                 <h3 className="text-lg font-mono mb-6 text-gray-300">How often do you replace your shoes?</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <OptionCard label="6 Months" value="6months" current={answers.replacement} groupName="replacement" icon={Clock} />
-                                    <OptionCard label="1 Year" value="1year" current={answers.replacement} groupName="replacement" icon={Clock} />
-                                    <OptionCard label="2+ Years" value="2years" current={answers.replacement} groupName="replacement" icon={Clock} />
+                                    <OptionCard label="6 Months" value="6months" current={answers.replacement} groupName="replacement" icon={Timer} />
+                                    <OptionCard label="1 Year" value="1year" current={answers.replacement} groupName="replacement" icon={Calendar} />
+                                    <OptionCard label="2+ Years" value="2years" current={answers.replacement} groupName="replacement" icon={CalendarDays} />
                                 </div>
                             </div>
 
                             <div>
                                 <h3 className="text-lg font-mono mb-6 text-gray-300">Any specific concerns? (Select all)</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <CheckboxCard label="Back Pain" value="back-pain" arrayValue={answers.concerns} groupName="concerns" icon={AlertCircle} />
-                                    <CheckboxCard label="Knee Pain" value="knee-pain" arrayValue={answers.concerns} groupName="concerns" icon={AlertCircle} />
-                                    <CheckboxCard label="Plantar Fasciitis" value="plantar-fasciitis" arrayValue={answers.concerns} groupName="concerns" icon={AlertCircle} />
+                                    <CheckboxCard label="Back Pain" value="back-pain" arrayValue={answers.concerns} groupName="concerns" icon={Zap} />
+                                    <CheckboxCard label="Knee Pain" value="knee-pain" arrayValue={answers.concerns} groupName="concerns" icon={Activity} />
+                                    <CheckboxCard label="Plantar Fasciitis" value="plantar-fasciitis" arrayValue={answers.concerns} groupName="concerns" icon={Flame} />
                                     <CheckboxCard label="Blisters" value="blisters" arrayValue={answers.concerns} groupName="concerns" icon={AlertCircle} />
                                 </div>
                             </div>
