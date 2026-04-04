@@ -52,7 +52,7 @@ const CartSidebar = () => {
                                 </div>
                             ) : (
                                 cartItems.map((item) => (
-                                    <div key={item.id} className="flex gap-4 border-b border-[#222] pb-6 last:border-0">
+                                    <div key={item.cartItemId} className="flex gap-4 border-b border-[#222] pb-6 last:border-0">
                                         {/* Product Image */}
                                         <div className="w-24 h-24 bg-[#111] rounded-sm overflow-hidden shrink-0 relative">
                                             <img
@@ -67,24 +67,24 @@ const CartSidebar = () => {
                                             <div>
                                                 <div className="flex justify-between items-start">
                                                     <h3 className="font-bold uppercase text-lg leading-tight">{item.name}</h3>
-                                                    <button onClick={() => removeFromCart(item.id)} className="text-gray-500 hover:text-red-500 transition-colors">
+                                                    <button onClick={() => removeFromCart(item.cartItemId)} className="text-gray-500 hover:text-red-500 transition-colors">
                                                         <Trash2 size={16} />
                                                     </button>
                                                 </div>
-                                                <p className="text-xs font-mono text-gray-400 uppercase tracking-widest mt-1">{item.category}</p>
+                                                <p className="text-xs font-mono text-gray-400 uppercase tracking-widest mt-1">{item.category} • Size {item.selectedSize}</p>
                                             </div>
 
                                             <div className="flex justify-between items-end mt-2">
                                                 <div className="flex items-center gap-3 bg-[#111] rounded-full px-3 py-1 border border-[#333]">
                                                     <button
-                                                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                                        onClick={() => updateQuantity(item.cartItemId, item.quantity - 1)}
                                                         className="text-gray-400 hover:text-white transition-colors"
                                                     >
                                                         <Minus size={14} />
                                                     </button>
                                                     <span className="font-mono text-sm w-4 text-center">{item.quantity}</span>
                                                     <button
-                                                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                        onClick={() => updateQuantity(item.cartItemId, item.quantity + 1)}
                                                         className="text-gray-400 hover:text-white transition-colors"
                                                     >
                                                         <Plus size={14} />

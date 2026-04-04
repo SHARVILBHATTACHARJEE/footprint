@@ -42,6 +42,7 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
     const [lifecycleStage, setLifecycleStage] = useState(0);
     const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
     const [is3dPreviewOpen, setIs3dPreviewOpen] = useState(false);
+    const [selectedSize, setSelectedSize] = useState('8');
 
     // Check for logged-in user
     const userString = localStorage.getItem('user');
@@ -201,10 +202,29 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
                                         </p>
                                     </div>
 
+                                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-8">
+                                        <span className="text-sm font-bold uppercase tracking-widest text-gray-500 shrink-0">Size (UK):</span>
+                                        <div className="flex flex-wrap gap-2">
+                                            {['6', '7', '8', '9', '10', '11', '12'].map(size => (
+                                                <button
+                                                    key={size}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setSelectedSize(size);
+                                                    }}
+                                                    className={`w-12 h-12 md:w-10 md:h-10 rounded-full flex items-center justify-center font-mono text-sm border transition-colors ${selectedSize === size ? 'border-[#00ff88] bg-[#00ff88]/10 text-[#00ff88]' : 'border-[#333] text-gray-400 hover:border-gray-500 hover:text-white'}`}
+                                                >
+                                                    {size}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
                                     <div className="flex flex-col gap-3">
                                         <button
-                                            onClick={() => {
-                                                onAdd(product);
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onAdd(product, selectedSize);
                                                 onClose();
                                             }}
                                             className="w-full flex justify-center items-center gap-3 bg-[#00ff88] hover:bg-white text-black font-bold uppercase tracking-widest py-4 rounded-sm transition-colors duration-300"

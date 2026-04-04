@@ -15,14 +15,14 @@ const SoleSizeDetector = () => {
     // Shoe Size Conversion Table
     const mapCmToSize = (cm) => {
         // Simple mapping based on standard sizing
-        if (cm <= 22.5) return { eu: '36', us_m: '4', us_w: '5.5' };
-        if (cm <= 23.5) return { eu: '37', us_m: '5', us_w: '6.5' };
-        if (cm <= 24.5) return { eu: '38.5', us_m: '6', us_w: '7.5' };
-        if (cm <= 25.5) return { eu: '40', us_m: '7', us_w: '8.5' };
-        if (cm <= 26.5) return { eu: '41.5', us_m: '8', us_w: '9.5' };
-        if (cm <= 27.5) return { eu: '43', us_m: '9.5', us_w: '11' };
-        if (cm <= 28.5) return { eu: '44.5', us_m: '11', us_w: '12.5' };
-        return { eu: '46+', us_m: '12+', us_w: '13.5+' };
+        if (cm <= 22.5) return { eu: '36', us_m: '4', us_w: '5.5', uk: '3.5' };
+        if (cm <= 23.5) return { eu: '37', us_m: '5', us_w: '6.5', uk: '4.5' };
+        if (cm <= 24.5) return { eu: '38.5', us_m: '6', us_w: '7.5', uk: '5.5' };
+        if (cm <= 25.5) return { eu: '40', us_m: '7', us_w: '8.5', uk: '6' };
+        if (cm <= 26.5) return { eu: '41.5', us_m: '8', us_w: '9.5', uk: '7' };
+        if (cm <= 27.5) return { eu: '43', us_m: '9.5', us_w: '11', uk: '8.5' };
+        if (cm <= 28.5) return { eu: '44.5', us_m: '11', us_w: '12.5', uk: '10' };
+        return { eu: '46+', us_m: '12+', us_w: '13.5+', uk: '11+' };
     };
 
     const handleFileUpload = (e) => {
@@ -381,7 +381,11 @@ const SoleSizeDetector = () => {
                                             </div>
                                         </div>
 
-                                        <div className="grid grid-cols-3 gap-4 text-center">
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                                            <div className="bg-[#222] py-3">
+                                                <p className="text-xs text-gray-500 mb-1">UK SIZE</p>
+                                                <p className="text-xl font-bold">{result.sizes.uk}</p>
+                                            </div>
                                             <div className="bg-[#222] py-3">
                                                 <p className="text-xs text-gray-500 mb-1">EU SIZE</p>
                                                 <p className="text-xl font-bold">{result.sizes.eu}</p>
@@ -420,6 +424,7 @@ const SoleSizeDetector = () => {
                             <thead>
                                 <tr className="border-b border-white/10">
                                     <th className="py-5 px-6 text-[#00ff88] font-bold uppercase tracking-widest text-sm">Foot Length (cm)</th>
+                                    <th className="py-5 px-6 font-bold uppercase tracking-widest text-sm text-gray-300">UK Size</th>
                                     <th className="py-5 px-6 font-bold uppercase tracking-widest text-sm text-gray-300">EU Size</th>
                                     <th className="py-5 px-6 font-bold uppercase tracking-widest text-sm text-gray-300">US Men</th>
                                     <th className="py-5 px-6 font-bold uppercase tracking-widest text-sm text-gray-300">US Women</th>
@@ -428,48 +433,56 @@ const SoleSizeDetector = () => {
                             <tbody className="divide-y divide-white/5">
                                 <tr className="hover:bg-white/5 transition-colors">
                                     <td className="py-4 px-6 font-mono text-gray-400">Up to 22.5</td>
+                                    <td className="py-4 px-6 font-bold">3.5</td>
                                     <td className="py-4 px-6 font-bold">36</td>
                                     <td className="py-4 px-6 font-bold">4</td>
                                     <td className="py-4 px-6 font-bold">5.5</td>
                                 </tr>
                                 <tr className="hover:bg-white/5 transition-colors bg-white/[0.02]">
                                     <td className="py-4 px-6 font-mono text-gray-400">22.6 - 23.5</td>
+                                    <td className="py-4 px-6 font-bold">4.5</td>
                                     <td className="py-4 px-6 font-bold">37</td>
                                     <td className="py-4 px-6 font-bold">5</td>
                                     <td className="py-4 px-6 font-bold">6.5</td>
                                 </tr>
                                 <tr className="hover:bg-white/5 transition-colors">
                                     <td className="py-4 px-6 font-mono text-gray-400">23.6 - 24.5</td>
+                                    <td className="py-4 px-6 font-bold">5.5</td>
                                     <td className="py-4 px-6 font-bold">38.5</td>
                                     <td className="py-4 px-6 font-bold">6</td>
                                     <td className="py-4 px-6 font-bold">7.5</td>
                                 </tr>
                                 <tr className="hover:bg-white/5 transition-colors bg-white/[0.02]">
                                     <td className="py-4 px-6 font-mono text-gray-400">24.6 - 25.5</td>
+                                    <td className="py-4 px-6 font-bold">6</td>
                                     <td className="py-4 px-6 font-bold">40</td>
                                     <td className="py-4 px-6 font-bold">7</td>
                                     <td className="py-4 px-6 font-bold">8.5</td>
                                 </tr>
                                 <tr className="hover:bg-white/5 transition-colors">
                                     <td className="py-4 px-6 font-mono text-gray-400">25.6 - 26.5</td>
+                                    <td className="py-4 px-6 font-bold">7</td>
                                     <td className="py-4 px-6 font-bold">41.5</td>
                                     <td className="py-4 px-6 font-bold">8</td>
                                     <td className="py-4 px-6 font-bold">9.5</td>
                                 </tr>
                                 <tr className="hover:bg-white/5 transition-colors bg-white/[0.02]">
                                     <td className="py-4 px-6 font-mono text-gray-400">26.6 - 27.5</td>
+                                    <td className="py-4 px-6 font-bold">8.5</td>
                                     <td className="py-4 px-6 font-bold">43</td>
                                     <td className="py-4 px-6 font-bold">9.5</td>
                                     <td className="py-4 px-6 font-bold">11</td>
                                 </tr>
                                 <tr className="hover:bg-white/5 transition-colors">
                                     <td className="py-4 px-6 font-mono text-gray-400">27.6 - 28.5</td>
+                                    <td className="py-4 px-6 font-bold">10</td>
                                     <td className="py-4 px-6 font-bold">44.5</td>
                                     <td className="py-4 px-6 font-bold">11</td>
                                     <td className="py-4 px-6 font-bold">12.5</td>
                                 </tr>
                                 <tr className="hover:bg-white/5 transition-colors text-[#00ff88] bg-[#00ff88]/5">
                                     <td className="py-4 px-6 font-mono border-t border-[#00ff88]/20">&gt; 28.5</td>
+                                    <td className="py-4 px-6 font-bold border-t border-[#00ff88]/20">11+</td>
                                     <td className="py-4 px-6 font-bold border-t border-[#00ff88]/20">46+</td>
                                     <td className="py-4 px-6 font-bold border-t border-[#00ff88]/20">12+</td>
                                     <td className="py-4 px-6 font-bold border-t border-[#00ff88]/20">13.5+</td>

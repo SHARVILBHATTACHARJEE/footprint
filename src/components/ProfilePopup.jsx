@@ -8,6 +8,7 @@ const ProfilePopup = ({ isOpen, onClose }) => {
     const [user, setUser] = useState(null);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
+    const [countryCode, setCountryCode] = useState('+91');
     const [phone, setPhone] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState('');
@@ -21,7 +22,23 @@ const ProfilePopup = ({ isOpen, onClose }) => {
                 setUser(parsedUser);
                 setFirstName(parsedUser.firstName || '');
                 setLastName(parsedUser.lastName || '');
-                setPhone(parsedUser.phone || '');
+                
+                // Try to parse country code from phone
+                const fullPhone = parsedUser.phone || '';
+                const codes = ['+91', '+1', '+44', '+971', '+61'];
+                let foundCode = '+91';
+                let number = fullPhone;
+                
+                for (const code of codes) {
+                    if (fullPhone.startsWith(code)) {
+                        foundCode = code;
+                        number = fullPhone.substring(code.length);
+                        break;
+                    }
+                }
+                
+                setCountryCode(foundCode);
+                setPhone(number.replace(/\D/g, ''));
             } else {
                 onClose();
             }
@@ -32,17 +49,29 @@ const ProfilePopup = ({ isOpen, onClose }) => {
         e.preventDefault();
         setError('');
         setMessage('');
+
+        // Validation
+        if (countryCode === '+91' && !/^[6-9]\d{9}$/.test(phone)) {
+            setError('Please enter a valid 10-digit Indian mobile number.');
+            return;
+        } else if (phone.length < 7) {
+            setError('Please enter a valid phone number.');
+            return;
+        }
+
         setIsLoading(true);
+
+        const fullPhone = `${countryCode}${phone}`;
 
         try {
             const userRef = doc(db, 'users', user.id);
             await updateDoc(userRef, {
                 firstName,
                 lastName,
-                phone
+                phone: fullPhone
             });
             
-            const updatedUser = { ...user, firstName, lastName, phone };
+            const updatedUser = { ...user, firstName, lastName, phone: fullPhone };
             localStorage.setItem('user', JSON.stringify(updatedUser));
             setUser(updatedUser);
 
@@ -122,14 +151,27 @@ const ProfilePopup = ({ isOpen, onClose }) => {
                             />
                         </div>
                         
-                        <input
-                            type="tel"
-                            value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                            placeholder="Phone Number"
-                            className="w-full bg-transparent border-b-2 border-[#333] py-3 text-white font-mono focus:outline-none focus:border-[#00ff88] transition-colors placeholder:text-gray-600"
-                            required
-                        />
+                        <div className="flex gap-2 items-end">
+                            <select
+                                value={countryCode}
+                                onChange={(e) => setCountryCode(e.target.value)}
+                                className="bg-transparent border-b-2 border-[#333] py-3 text-white font-mono focus:outline-none focus:border-[#00ff88] transition-colors appearance-none cursor-pointer"
+                            >
+                                <option className="bg-[#111]" value="+91">+91 (IN)</option>
+                                <option className="bg-[#111]" value="+1">+1 (US)</option>
+                                <option className="bg-[#111]" value="+44">+44 (UK)</option>
+                                <option className="bg-[#111]" value="+971">+971 (UAE)</option>
+                                <option className="bg-[#111]" value="+61">+61 (AU)</option>
+                            </select>
+                            <input
+                                type="tel"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                                placeholder="Phone Number"
+                                className="flex-1 bg-transparent border-b-2 border-[#333] py-3 text-white font-mono focus:outline-none focus:border-[#00ff88] transition-colors placeholder:text-gray-600"
+                                required
+                            />
+                        </div>
 
                         <input
                             type="email"

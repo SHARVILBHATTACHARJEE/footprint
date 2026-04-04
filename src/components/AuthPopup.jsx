@@ -10,9 +10,10 @@ import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../firebase/config';
 import emailjs from '@emailjs/browser';
 
-const AuthPopup = ({ isOpen, onClose }) => {
+const AuthPopup = ({ isOpen, onClose, isInitialLogin = false }) => {
     const [step, setStep] = useState('AUTH'); // AUTH or EMAIL_OTP
-    const [isLogin, setIsLogin] = useState(false);
+    const [isLogin, setIsLogin] = useState(isInitialLogin);
+    const [countryCode, setCountryCode] = useState('+91');
     
     // Form fields
     const [email, setEmail] = useState('');
@@ -33,7 +34,7 @@ const AuthPopup = ({ isOpen, onClose }) => {
         // Reset state when popup closes
         if (!isOpen) {
             setStep('AUTH');
-            setIsLogin(false);
+            // Remove specific reset if we want it to persist when clicking back and forth
             setEmail('');
             setPassword('');
             setFirstName('');
@@ -43,8 +44,10 @@ const AuthPopup = ({ isOpen, onClose }) => {
             setGeneratedEmailOtp('');
             setError('');
             setIsLoading(false);
+        } else {
+            setIsLogin(isInitialLogin);
         }
-    }, [isOpen]);
+    }, [isOpen, isInitialLogin]);
 
     const handleAuthSubmit = async (e) => {
         e.preventDefault();
@@ -93,6 +96,14 @@ const AuthPopup = ({ isOpen, onClose }) => {
             }
             if (password.length < 6) {
                 setError('Password must be at least 6 characters.');
+                return;
+            }
+            // Basic mobile validation (10 digits after country code if India, otherwise flexible)
+            if (countryCode === '+91' && !/^[6-9]\d{9}$/.test(phone)) {
+                setError('Please enter a valid 10-digit Indian mobile number.');
+                return;
+            } else if (phone.length < 7) {
+                setError('Please enter a valid phone number.');
                 return;
             }
 
@@ -155,7 +166,7 @@ const AuthPopup = ({ isOpen, onClose }) => {
                 uid: user.uid,
                 firstName,
                 lastName,
-                phone,
+                phone: `${countryCode}${phone}`,
                 email,
                 createdAt: serverTimestamp()
             };
@@ -167,7 +178,7 @@ const AuthPopup = ({ isOpen, onClose }) => {
                 email: user.email,
                 firstName,
                 lastName,
-                phone
+                phone: `${countryCode}${phone}`
             }));
             
             onClose();
@@ -247,14 +258,27 @@ const AuthPopup = ({ isOpen, onClose }) => {
                                             className="w-1/2 bg-transparent border-b-2 border-[#333] py-3 text-white font-mono focus:outline-none focus:border-[#00ff88] transition-colors placeholder:text-gray-600"
                                         />
                                     </div>
-                                    <input
-                                        type="tel"
-                                        value={phone}
-                                        onChange={(e) => setPhone(e.target.value)}
-                                        placeholder="Phone Number"
-                                        className="w-full bg-transparent border-b-2 border-[#333] py-3 text-white font-mono focus:outline-none focus:border-[#00ff88] transition-colors placeholder:text-gray-600"
-                                        required={!isLogin}
-                                    />
+                                    <div className="flex gap-2 items-end">
+                                        <select
+                                            value={countryCode}
+                                            onChange={(e) => setCountryCode(e.target.value)}
+                                            className="bg-transparent border-b-2 border-[#333] py-3 text-white font-mono focus:outline-none focus:border-[#00ff88] transition-colors appearance-none cursor-pointer"
+                                        >
+                                            <option className="bg-[#111]" value="+91">+91 (IN)</option>
+                                            <option className="bg-[#111]" value="+1">+1 (US)</option>
+                                            <option className="bg-[#111]" value="+44">+44 (UK)</option>
+                                            <option className="bg-[#111]" value="+971">+971 (UAE)</option>
+                                            <option className="bg-[#111]" value="+61">+61 (AU)</option>
+                                        </select>
+                                        <input
+                                            type="tel"
+                                            value={phone}
+                                            onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                                            placeholder="Phone Number"
+                                            className="flex-1 bg-transparent border-b-2 border-[#333] py-3 text-white font-mono focus:outline-none focus:border-[#00ff88] transition-colors placeholder:text-gray-600"
+                                            required={!isLogin}
+                                        />
+                                    </div>
                                 </div>
                             )}
                             

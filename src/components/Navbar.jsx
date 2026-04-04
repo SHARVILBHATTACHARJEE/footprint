@@ -5,12 +5,15 @@ import { User, ShoppingBag, Home as HomeIcon, Store, Zap, ScanLine } from 'lucid
 import { useCart } from '../context/CartContext';
 import { logoutUser } from '../firebase/auth';
 import AuthPopup from './AuthPopup';
+import AuthChoicePopup from './AuthChoicePopup';
 import ProfilePopup from './ProfilePopup';
 import OrdersPopup from './OrdersPopup';
 
 const Navbar = () => {
     const [isHovered, setIsHovered] = useState(false);
     const [isAuthOpen, setIsAuthOpen] = useState(false);
+    const [isAuthLogin, setIsAuthLogin] = useState(true);
+    const [isAuthChoiceOpen, setIsAuthChoiceOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isProfilePopupOpen, setIsProfilePopupOpen] = useState(false);
     const [isOrdersPopupOpen, setIsOrdersPopupOpen] = useState(false);
@@ -153,7 +156,7 @@ const Navbar = () => {
                         </AnimatePresence>
                     </div>
                 ) : (
-                    <button onClick={() => setIsAuthOpen(true)} className="px-4 py-3 md:px-6 md:py-2.5 bg-black/50 backdrop-blur-xl border border-white/10 text-white rounded-full hover:bg-white hover:text-black hover:border-white transition-all flex items-center gap-2 text-xs md:text-sm uppercase tracking-widest font-bold">
+                    <button onClick={() => setIsAuthChoiceOpen(true)} className="px-4 py-3 md:px-6 md:py-2.5 bg-black/50 backdrop-blur-xl border border-white/10 text-white rounded-full hover:bg-white hover:text-black hover:border-white transition-all flex items-center gap-2 text-xs md:text-sm uppercase tracking-widest font-bold">
                         <User size={16} /> <span className="hidden md:inline">Sign In</span>
                     </button>
                 )}
@@ -186,7 +189,16 @@ const Navbar = () => {
                 body { padding-bottom: 80px; }
             }
         `}} />
-        <AuthPopup isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
+        <AuthPopup isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} isInitialLogin={isAuthLogin} />
+        <AuthChoicePopup 
+            isOpen={isAuthChoiceOpen} 
+            onClose={() => setIsAuthChoiceOpen(false)} 
+            onChoice={(choice) => {
+                setIsAuthLogin(choice);
+                setIsAuthChoiceOpen(false);
+                setIsAuthOpen(true);
+            }} 
+        />
         <ProfilePopup isOpen={isProfilePopupOpen} onClose={() => setIsProfilePopupOpen(false)} />
         <OrdersPopup isOpen={isOrdersPopupOpen} onClose={() => setIsOrdersPopupOpen(false)} />
         </>

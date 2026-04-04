@@ -5,6 +5,8 @@ import { useCart } from '../context/CartContext';
 import { collection, addDoc, getDocs, query, where, serverTimestamp, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import emailjs from '@emailjs/browser';
+import AuthPopup from './AuthPopup';
+import AuthChoicePopup from './AuthChoicePopup';
 
 const initialAddressState = {
     fullName: '',
@@ -38,6 +40,11 @@ const CheckoutPopup = ({ isOpen, onClose, subtotal }) => {
     // Payment Modal State
     const [paymentStatus, setPaymentStatus] = useState(null);
     const [paymentMessage, setPaymentMessage] = useState('');
+
+    // Auth state for guests
+    const [isAuthChoiceOpen, setIsAuthChoiceOpen] = useState(false);
+    const [isAuthOpen, setIsAuthOpen] = useState(false);
+    const [isAuthLogin, setIsAuthLogin] = useState(true);
 
     const handleClosePaymentPopup = () => {
         if (paymentStatus === 'success') {
@@ -165,7 +172,7 @@ const CheckoutPopup = ({ isOpen, onClose, subtotal }) => {
         const userString = localStorage.getItem('user');
         const user = userString ? JSON.parse(userString) : null;
         if (!user || !user.id) {
-            alert("Please log in to save an address.");
+            setIsAuthChoiceOpen(true);
             return;
         }
 
@@ -682,6 +689,26 @@ const CheckoutPopup = ({ isOpen, onClose, subtotal }) => {
                     </AnimatePresence>
                 </motion.div>
             )}
+            
+            <AuthChoicePopup 
+                isOpen={isAuthChoiceOpen}
+                onClose={() => setIsAuthChoiceOpen(false)}
+                onChoice={(choice) => {
+                    setIsAuthLogin(choice);
+                    setIsAuthChoiceOpen(false);
+                    setIsAuthOpen(true);
+                }}
+            />
+            
+            <AuthPopup 
+                isOpen={isAuthOpen}
+                onClose={() => setIsAuthOpen(false)}
+                isInitialLogin={isAuthLogin}
+                onSuccess={() => {
+                    setIsAuthOpen(false);
+                    setStep(2);
+                }}
+            />
         </AnimatePresence>
     );
 };
