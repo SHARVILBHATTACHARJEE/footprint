@@ -1,15 +1,75 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, Bot } from 'lucide-react';
+import { MessageSquare, X, Send, Bot, ArrowRight } from 'lucide-react';
+import { getProducts } from '../firebase/firestore';
+import { Link } from 'react-router-dom';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
 
 const Chatbot = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
-        { id: 1, sender: 'bot', text: 'Hi there! I am your AI Footprint Guide. How can I help you today?' }
+        { id: 1, sender: 'bot', text: 'Welcome to Footprint! I am your AI Footwear Specialist. To find your perfect match, tell me: what is your primary activity? (e.g., Running, City Walking, or Standing)' }
     ]);
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
+    const [products, setProducts] = useState([]);
+    
+    // Active Gemini Chat Session
+    const [chatSession, setChatSession] = useState(null);
     const messagesEndRef = useRef(null);
+
+    useEffect(() => {
+        const initAI = async () => {
+            try {
+                const data = await getProducts();
+                setProducts(data);
+
+                if (!import.meta.env.VITE_GEMINI_API_KEY) {
+                    console.warn("No Gemini API key found");
+                    return;
+                }
+
+                // Inject product list into context
+                const catalogContext = data.map(p => 
+                    `- ID: ${p.id}, Name: ${p.name}, Price: INR ${p.price || p.feature_price || 2999}, Category: ${p.category}, Style: ${p.walking_style || 'All-Purpose'}, Specs: ${p.description}`
+                ).join("\n");
+
+                const systemInstruction = `You are a premium AI Footwear Specialist for an innovative brand named 'Footprint'. 
+Your goal is to converse with users naturally, understand their foot profile (like flat feet, running frequency, or joint pain), and recommend the absolute BEST shoes from our catalog.
+
+RULES:
+1. Keep the conversation strictly focused on footwear, foot health, sizing, tracking orders, and the user's needs. Do not answer off-topic queries.
+2. Be concise, friendly, and expert-like. Always make the user feel like a VIP. Respond with plain text or simple markdown.
+3. If you recommend a product, ONLY recommend ones from the catalog list below. Do not make up any products.
+4. When recommending a product, YOU MUST explicitly include the exact phrase "RECOMMEND_PRODUCT_ID: [ID]" somewhere in your response (preferably at the end) so the UI can render a visual clickable card! 
+Example: "I think you'll love the Cloud Strider for your morning runs! RECOMMEND_PRODUCT_ID: cloud-strider"
+5. Explain briefly why a product is a good match based on its specs.
+
+CATALOG:
+${catalogContext}`;
+
+                const generativeModel = genAI.getGenerativeModel({
+                    model: "gemini-2.5-flash",
+                    systemInstruction: systemInstruction,
+                    generationConfig: { temperature: 0.7 }
+                });
+
+                const chat = generativeModel.startChat({
+                    history: [
+                        { role: "user", parts: [{ text: "Hello!" }] },
+                        { role: "model", parts: [{ text: "Welcome to Footprint! I am your AI Footwear Specialist. To find your perfect match, tell me: what is your primary activity? (e.g., Running, City Walking, or Standing)" }] }
+                    ]
+                });
+
+                setChatSession(chat);
+            } catch (e) {
+                console.error("AI Init Failed", e);
+            }
+        };
+        initAI();
+    }, []);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -19,34 +79,57 @@ const Chatbot = () => {
         scrollToBottom();
     }, [messages, isTyping]);
 
-    const handleSend = () => {
+    const handleSend = async () => {
         if (!inputValue.trim()) return;
 
-        const userMsg = { id: Date.now(), sender: 'user', text: inputValue };
+        const userText = inputValue.trim();
+        const userMsg = { id: Date.now(), sender: 'user', text: userText };
         setMessages(prev => [...prev, userMsg]);
         setInputValue('');
         setIsTyping(true);
 
-        // Simple mock responses
-        setTimeout(() => {
-            const lowerInput = userMsg.text.toLowerCase();
-            let botReply = "I'm not sure about that. Try asking about our smart shoes, tracking your order, finding your size, or checking our return policy.";
-
-            if (lowerInput.includes('smart') || lowerInput.includes('shoe') || lowerInput.includes('feature')) {
-                botReply = "Our smart shoes feature impact redistribution, arch alignment, and thermal regulation. Plus, you can preview them in 3D or track their lifecycle right from our app!";
-            } else if (lowerInput.includes('order') || lowerInput.includes('track')) {
-                botReply = "You can track your order by navigating to your profile and clicking on 'Orders', or check the confirmation email we sent you.";
-            } else if (lowerInput.includes('return') || lowerInput.includes('refund')) {
-                botReply = "We offer a 30-day hassle-free return policy. As long as the shoes are in neat condition, we've got you covered.";
-            } else if (lowerInput.includes('size') || lowerInput.includes('fit')) {
-                botReply = "Not sure about your size? Use our 'Sole Size Detector' tool in the app to get an accurate scan of your foot length.";
-            } else if (lowerInput.includes('hi') || lowerInput.includes('hello')) {
-                botReply = "Hello! Looking for a new pair of ultra-modern sneakers?";
+        try {
+            if (!chatSession) {
+                // Fallback if AI not initialized
+                setTimeout(() => {
+                    setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'bot', text: "I'm currently unable to connect to my AI brain. Check your API key or try again later!" }]);
+                    setIsTyping(false);
+                }, 1000);
+                return;
             }
 
-            setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'bot', text: botReply }]);
+            // Real Gemini Chat
+            const result = await chatSession.sendMessage(userText);
+            const responseText = result.response.text();
+            
+            let finalResponseText = responseText;
+            let recommendedIds = [];
+
+            // Extract recommended IDs tags
+            const regex = /RECOMMEND_PRODUCT_ID:\s*([a-zA-Z0-9_-]+)/g;
+            let match;
+            while ((match = regex.exec(responseText)) !== null) {
+                recommendedIds.push(match[1]);
+            }
+            
+            // Clean out the raw text tags before showing to user
+            finalResponseText = responseText.replace(/RECOMMEND_PRODUCT_ID:\s*([a-zA-Z0-9_-]+)/g, '').trim();
+
+            const botMsg = { 
+                id: Date.now() + 1, 
+                sender: 'bot', 
+                text: finalResponseText,
+                type: recommendedIds.length > 0 ? 'recommendation' : 'text',
+                recommendedProducts: recommendedIds.map(id => products.find(p => p.id === id)).filter(Boolean)
+            };
+
+            setMessages(prev => [...prev, botMsg]);
+        } catch (error) {
+            console.error("Live AI Chat error", error);
+            setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'bot', text: "Oops, something interrupted my thoughts. Could you say that again?", type: 'text' }]);
+        } finally {
             setIsTyping(false);
-        }, 1200);
+        }
     };
 
     const handleKeyPress = (e) => {
@@ -83,7 +166,7 @@ const Chatbot = () => {
                                     <Bot size={20} />
                                 </div>
                                 <div>
-                                    <h3 className="text-white font-bold uppercase tracking-wider text-sm">Footprint AI</h3>
+                                    <h3 className="text-white font-bold uppercase tracking-wider text-sm">Footwear Specialist</h3>
                                     <div className="flex items-center gap-1.5 align-middle">
                                         <div className="w-2 h-2 rounded-full bg-[#00ff88] animate-pulse"></div>
                                         <span className="text-[10px] uppercase text-[#00ff88] font-mono font-bold tracking-widest">Online</span>
@@ -98,13 +181,36 @@ const Chatbot = () => {
                         {/* Messages Area */}
                         <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide">
                             {messages.map((msg) => (
-                                <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} w-full`}>
                                     <div className={`max-w-[85%] p-3 rounded-2xl ${
                                         msg.sender === 'user' 
                                             ? 'bg-[#00ff88] text-black rounded-tr-sm' 
                                             : 'bg-[#1a1a1a] text-gray-200 border border-[#333] rounded-tl-sm'
                                     }`}>
                                         <p className="text-sm">{msg.text}</p>
+
+                                        {/* Dynamic Product Recommendations */}
+                                        {msg.type === 'recommendation' && msg.recommendedProducts?.length > 0 && (
+                                            <div className="mt-4 flex flex-col gap-2">
+                                                {msg.recommendedProducts.map(product => (
+                                                        <div key={product.id} className="bg-black border border-[#333] rounded-xl p-2 flex gap-3 items-center">
+                                                            <img src={product.image_url || product.image} alt={product.name} className="w-16 h-16 object-cover rounded-lg bg-[#111]" />
+                                                            <div className="flex-1">
+                                                                <h4 className="text-[11px] md:text-xs font-bold text-white uppercase line-clamp-1">{product.name}</h4>
+                                                                <p className="text-[9px] md:text-[10px] text-gray-400 font-mono tracking-wider">{product.walking_style || 'All-Purpose'}</p>
+                                                                <p className="text-xs text-[#00ff88] font-bold mt-1">₹{product.price || product.feature_price || '2999'}</p>
+                                                            </div>
+                                                            <Link 
+                                                                to="/shop"
+                                                                onClick={() => setIsOpen(false)}
+                                                                className="p-2 bg-[#111] hover:bg-[#00ff88] text-[#00ff88] hover:text-black rounded-lg transition-colors border border-[#00ff88]/20 shrink-0"
+                                                            >
+                                                                <ArrowRight size={14} />
+                                                            </Link>
+                                                        </div>
+                                                    ))}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             ))}
@@ -122,16 +228,14 @@ const Chatbot = () => {
                             <div ref={messagesEndRef} />
                         </div>
 
-                        {/* Quick Replies (Optional, if no messages from user yet) */}
+                        {/* Initial Quick Replies just for starting off */}
                         {messages.length === 1 && !isTyping && (
-                            <div className="px-4 pb-2 flex gap-2 overflow-x-auto scrollbar-hide">
-                                {['Shoe Specs', 'Size Guide', 'Track Order'].map((chip) => (
+                            <div className="px-4 pb-2 flex gap-2 flex-wrap">
+                                {['Running', 'City Walking', 'Standing All Day', 'Flat Feet?'].map((chip) => (
                                     <button 
                                         key={chip}
                                         onClick={() => {
                                             setInputValue(chip);
-                                            // Optional: immediately send instead of just filling input
-                                            // setTimeout(() => handleSend(), 100);
                                         }}
                                         className="whitespace-nowrap text-xs bg-[#1a1a1a] border border-[#333] text-gray-300 px-3 py-1.5 rounded-full hover:border-[#00ff88] hover:text-[#00ff88] transition-colors"
                                     >

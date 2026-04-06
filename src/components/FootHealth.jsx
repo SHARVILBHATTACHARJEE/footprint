@@ -1,5 +1,6 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import BiometricHeatmap from './BiometricHeatmap';
 
 const FootHealth = () => {
     const containerRef = useRef(null);
@@ -7,6 +8,17 @@ const FootHealth = () => {
         target: containerRef,
         offset: ["start end", "end start"]
     });
+
+    const [answers, setAnswers] = useState(null);
+
+    useEffect(() => {
+        const stored = localStorage.getItem('smartFitAnswers');
+        if (stored) {
+            try {
+                setAnswers(JSON.parse(stored));
+            } catch (e) {}
+        }
+    }, []);
 
     return (
         <section ref={containerRef} className="relative w-full py-32 bg-[#050505] text-white overflow-hidden">
@@ -42,71 +54,7 @@ const FootHealth = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
 
                     {/* Interactive Foot Model / Visualization */}
-                    <motion.div
-                        initial={{ opacity: 0, x: -50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
-                        className="relative h-[400px] md:h-[600px] w-full bg-black/50 border border-[#222] rounded-2xl p-4 md:p-8 flex items-center justify-center overflow-hidden"
-                    >
-                        {/* Abstract Foot Visualization SVG */}
-                        <svg viewBox="0 0 200 300" className="w-auto h-full drop-shadow-[0_0_15px_rgba(0,255,136,0.3)] z-10">
-                            {/* Static Stylized Outline */}
-                            <motion.path
-                                d="M100 30 C80 30, 50 50, 50 100 C50 150, 60 200, 70 230 C80 250, 90 270, 100 280 C110 270, 120 250, 130 230 C140 200, 150 150, 150 100 C150 50, 120 30, 100 30 Z"
-                                fill="rgba(0,255,136,0.02)"
-                                stroke="#00ff88"
-                                strokeWidth="1"
-                                initial={{ opacity: 0 }}
-                                whileInView={{ opacity: 1 }}
-                                transition={{ duration: 1.5 }}
-                            />
-
-                            {/* Simplified Animated Pressure Points Default */}
-                            {[
-                                { cx: 80, cy: 120, label: "Heel Strike", delay: 0 },
-                                { cx: 100, cy: 180, label: "Arch Support", delay: 0.5 },
-                                { cx: 100, cy: 230, label: "Forefoot", delay: 1 }
-                            ].map((point, i) => (
-                                <g key={i}>
-                                    <motion.circle
-                                        cx={point.cx}
-                                        cy={point.cy}
-                                        r="6"
-                                        fill="#00ff88"
-                                        initial={{ opacity: 0.3, scale: 0.8 }}
-                                        animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }}
-                                        transition={{ duration: 3, repeat: Infinity, delay: point.delay, ease: "easeInOut" }}
-                                    />
-                                </g>
-                            ))}
-                        </svg>
-
-                        {/* Rendering HTML Labels positioned absolutely over the SVG container */}
-                        <div className="absolute inset-0 z-20 pointer-events-none">
-                            {[
-                                { top: '38%', left: '25%', text: "Heel Strike" },
-                                { top: '55%', left: '50%', text: "Arch Support", transform: "translateX(-50%)" },
-                                { top: '75%', left: '35%', text: "Forefoot" }
-                            ].map((label, i) => (
-                                <motion.div
-                                    key={i}
-                                    className="absolute text-[10px] md:text-xs uppercase tracking-widest text-[#00ff88] font-bold bg-black/80 px-2 py-1 border border-[#00ff88]/30 rounded backdrop-blur-sm"
-                                    style={{
-                                        top: label.top,
-                                        left: label.left,
-                                        right: label.right,
-                                        transform: label.transform
-                                    }}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.5 + i * 0.2 }}
-                                >
-                                    {label.text}
-                                </motion.div>
-                            ))}
-                        </div>
-                    </motion.div>
+                    <BiometricHeatmap answers={answers} />
 
                     {/* Benefit Cards */}
                     <div className="space-y-6">
@@ -126,7 +74,6 @@ const FootHealth = () => {
                             desc="Graphene-infused mesh actively dissipates heat to prevent swelling and blisters."
                         />
                     </div>
-
                 </div>
             </div>
         </section>

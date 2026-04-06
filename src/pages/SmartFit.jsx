@@ -11,6 +11,7 @@ import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
 import { getProducts } from '../firebase/firestore';
 import ProductModal from '../components/ProductModal';
+import BiometricHeatmap from '../components/BiometricHeatmap';
 
 const SmartFit = () => {
     const [step, setStep] = useState(1);
@@ -71,6 +72,69 @@ const SmartFit = () => {
         if (step > 1) setStep(s => s - 1);
     };
 
+    const computeRecommendations = (parsedAnswers, rawData) => {
+        const data = rawData.map(item => {
+            const rawPrice = item.feature_price || item.price || '0';
+            const parsedPrice = parseFloat(rawPrice.toString().replace(/[^0-9.]/g, ''));
+            return { 
+                ...item, 
+                image: item.image_url,
+                price: parsedPrice,
+                walkingStyle: item.walking_style,
+                rating: item.avg_rating ? Number(item.avg_rating).toFixed(1) : 'New'
+            };
+        });
+
+        // Simple logic mapping answers to product properties
+        const scoredProducts = data.map(product => {
+            let score = 50; // Base score
+
+            // Add points if category/walking style matches activity preference
+            if (parsedAnswers.activity === 'running' && (product.walking_style === 'Running' || product.category === 'Athletic')) score += 20;
+            if (parsedAnswers.activity === 'walking' && (product.walking_style === 'City Walking' || product.category === 'Casual')) score += 20;
+
+            // Add points for climate match
+            if (parsedAnswers.climate === 'hot' && (product.climate === 'Warm' || product.climate === 'All-Weather')) score += 15;
+            if (parsedAnswers.climate === 'cold' && (product.climate === 'Harsh' || product.climate === 'All-Weather')) score += 15;
+            if (parsedAnswers.climate === 'humid' && product.climate === 'Warm') score += 10;
+
+            // Add randomness for tie-breaking and variety
+            score += Math.floor(Math.random() * 10);
+
+            // Cap score at 99
+            score = Math.min(score, 99);
+            return { ...product, matchScore: score };
+        });
+
+        // Sort by score descending
+        scoredProducts.sort((a, b) => b.matchScore - a.matchScore);
+
+        // Take top 3
+        setRecommendations(scoredProducts.slice(0, 3));
+        setMatchScore(scoredProducts[0]?.matchScore || 0);
+    };
+
+    // Auto-load if survey previously completed
+    React.useEffect(() => {
+        const checkExisting = async () => {
+            const stored = localStorage.getItem('smartFitAnswers');
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    if (parsed && parsed.footWidth) {
+                        setAnswers(parsed);
+                        setStep(5); // Move to results step (loading state)
+                        setIsAnalyzing(true);
+                        const rawData = await getProducts();
+                        computeRecommendations(parsed, rawData);
+                        setIsAnalyzing(false);
+                    }
+                } catch (e) {}
+            }
+        };
+        checkExisting();
+    }, []);
+
     const submitAnalysis = async () => {
         setStep(5); // Move to results step (loading state)
         setIsAnalyzing(true);
@@ -79,48 +143,13 @@ const SmartFit = () => {
             // Fetch products from Firestore
             const rawData = await getProducts();
 
-            const data = rawData.map(item => {
-                const rawPrice = item.feature_price || item.price || '0';
-                const parsedPrice = parseFloat(rawPrice.toString().replace(/[^0-9.]/g, ''));
-                return { 
-                    ...item, 
-                    image: item.image_url,
-                    price: parsedPrice,
-                    walkingStyle: item.walking_style,
-                    rating: item.avg_rating ? Number(item.avg_rating).toFixed(1) : 'New'
-                };
-            });
+            // Save answers to localStorage for heatmap generation
+            localStorage.setItem('smartFitAnswers', JSON.stringify(answers));
 
             // Artificial delay to make it feel like "analysis"
             await new Promise(resolve => setTimeout(resolve, 2000));
 
-            // Simple logic mapping answers to product properties
-            const scoredProducts = data.map(product => {
-                let score = 50; // Base score
-
-                // Add points if category/walking style matches activity preference
-                if (answers.activity === 'running' && (product.walking_style === 'Running' || product.category === 'Athletic')) score += 20;
-                if (answers.activity === 'walking' && (product.walking_style === 'City Walking' || product.category === 'Casual')) score += 20;
-
-                // Add points for climate match
-                if (answers.climate === 'hot' && (product.climate === 'Warm' || product.climate === 'All-Weather')) score += 15;
-                if (answers.climate === 'cold' && (product.climate === 'Harsh' || product.climate === 'All-Weather')) score += 15;
-                if (answers.climate === 'humid' && product.climate === 'Warm') score += 10;
-
-                // Add randomness for tie-breaking and variety
-                score += Math.floor(Math.random() * 10);
-
-                // Cap score at 99
-                score = Math.min(score, 99);
-                return { ...product, matchScore: score };
-            });
-
-            // Sort by score descending
-            scoredProducts.sort((a, b) => b.matchScore - a.matchScore);
-
-            // Take top 3
-            setRecommendations(scoredProducts.slice(0, 3));
-            setMatchScore(scoredProducts[0]?.matchScore || 0);
+            computeRecommendations(answers, rawData);
 
         } catch (error) {
             console.error('Analysis failed:', error);
@@ -130,6 +159,7 @@ const SmartFit = () => {
     };
 
     const restart = () => {
+        localStorage.removeItem('smartFitAnswers');
         setAnswers({
             footWidth: '', archType: '', gaitType: '', activity: '',
             climate: '', surfaces: [], replacement: '', concerns: []
@@ -367,17 +397,25 @@ const SmartFit = () => {
                             ) : (
                                 <div className="w-full">
                                     <div className="bg-[#0a0a0a] border border-[#00ff88]/30 rounded-2xl p-8 mb-12 flex flex-col md:flex-row items-center justify-between gap-8">
-                                        <div>
-                                            <h2 className="text-2xl font-bold uppercase tracking-widest text-[#00ff88] flex items-center gap-3">
+                                        <div className="w-full md:w-1/2 flex flex-col justify-center">
+                                            <h2 className="text-2xl font-bold uppercase tracking-widest text-[#00ff88] flex items-center gap-3 mb-2">
                                                 <Zap /> Analysis Complete
                                             </h2>
-                                            <p className="text-gray-400 font-mono mt-2">
+                                            <p className="text-gray-400 font-mono mb-6">
                                                 Based on your {answers.footWidth} width, {answers.archType} arch, and {answers.activity} focus, we've found your ultimate matches.
                                             </p>
+                                            
+                                            <div className="flex items-center gap-8 bg-[#111] p-4 rounded-xl border border-[#222] w-fit">
+                                                <div className="text-center shrink-0">
+                                                    <div className="text-5xl font-black text-[#00ff88]">{matchScore}%</div>
+                                                    <div className="text-xs uppercase tracking-widest text-gray-500 font-bold mt-1">Top Match Score</div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="text-center shrink-0">
-                                            <div className="text-5xl font-black text-[#00ff88]">{matchScore}%</div>
-                                            <div className="text-xs uppercase tracking-widest text-gray-500 font-bold mt-1">Top Match Score</div>
+                                        <div className="w-full md:w-1/2 flex justify-end">
+                                            <div className="w-full max-w-[300px]">
+                                                <BiometricHeatmap answers={answers} heightClass="h-[300px]" />
+                                            </div>
                                         </div>
                                     </div>
 
