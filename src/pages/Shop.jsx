@@ -23,6 +23,7 @@ const Shop = () => {
     const [activeClimate, setActiveClimate] = useState("All");
     const [sortOrder, setSortOrder] = useState("none"); // "none", "lowToHigh", "highToLow"
     const [selectedSizes, setSelectedSizes] = useState({});
+    const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
     const { addToCart } = useCart();
 
@@ -142,9 +143,17 @@ const Shop = () => {
                 <motion.aside
                     initial={{ opacity: 0, x: -50 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="w-full lg:w-64 shrink-0"
+                    className="w-full lg:w-64 shrink-0 mb-8 lg:mb-0"
                 >
-                    <div className="sticky top-32">
+                    <div 
+                        className="lg:hidden flex justify-between items-center bg-[#111] border border-[#333] p-4 rounded-xl cursor-pointer"
+                        onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
+                    >
+                        <span className="font-bold uppercase tracking-widest text-sm text-[#00ff88]">Filter Collection</span>
+                        <span className="text-gray-500 font-mono text-xl leading-none">{isMobileFilterOpen ? '−' : '+'}</span>
+                    </div>
+
+                    <div className={`mt-4 lg:mt-0 ${isMobileFilterOpen ? 'block' : 'hidden'} lg:block lg:sticky lg:top-32 h-[350px] lg:h-auto overflow-y-auto lg:overflow-visible pr-2 bg-[#0a0a0a] lg:bg-transparent p-4 lg:p-0 rounded-xl border border-[#222] lg:border-none custom-scrollbar`}>
                         <FilterSection
                             title="Category"
                             options={categories}

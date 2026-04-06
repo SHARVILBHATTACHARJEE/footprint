@@ -149,13 +149,13 @@ const SmartFit = () => {
                     onChange={() => updateAnswer(groupName, value)}
                     className="sr-only"
                 />
-                <div className={`p-6 border flex flex-col items-center text-center gap-4 rounded-xl flex-grow transition-all duration-300 ${isSelected ? 'border-[#00ff88] bg-[#00ff88]/10 text-white' : 'border-[#333] bg-[#111] text-gray-400 group-hover:border-gray-500 hover:text-white'}`}>
-                    <div className={`p-3 rounded-full ${isSelected ? 'bg-[#00ff88] text-black' : 'bg-[#222] text-gray-400 group-hover:bg-[#333]'}`}>
-                        {Icon && <Icon size={32} />}
+                <div className={`p-4 md:p-6 border flex flex-row md:flex-col items-center justify-start md:justify-center text-left md:text-center gap-4 rounded-xl flex-grow transition-all duration-300 ${isSelected ? 'border-[#00ff88] bg-[#00ff88]/10 text-white' : 'border-[#333] bg-[#111] text-gray-400 group-hover:border-gray-500 hover:text-white'}`}>
+                    <div className={`p-3 rounded-full shrink-0 flex items-center justify-center ${isSelected ? 'bg-[#00ff88] text-black' : 'bg-[#222] text-gray-400 group-hover:bg-[#333]'}`}>
+                        {Icon && <Icon size={24} className="md:w-8 md:h-8" />}
                     </div>
                     <div>
-                        <span className={`block font-bold uppercase tracking-wider ${isSelected ? 'text-[#00ff88]' : ''}`}>{label}</span>
-                        {description && <span className="block mt-2 text-xs font-mono opacity-80">{description}</span>}
+                        <span className={`block font-bold uppercase tracking-wider text-sm md:text-base ${isSelected ? 'text-[#00ff88]' : ''}`}>{label}</span>
+                        {description && <span className="block mt-1 md:mt-2 text-[10px] md:text-xs font-mono opacity-80">{description}</span>}
                     </div>
                 </div>
             </label>

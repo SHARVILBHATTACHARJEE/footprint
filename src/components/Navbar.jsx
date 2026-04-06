@@ -150,7 +150,7 @@ const Navbar = () => {
                 </div>
 
                 {/* Right - Profile & Cart */}
-                <div className="flex justify-end items-center gap-4 pointer-events-auto z-50">
+                <div className="flex justify-end items-center gap-4 pointer-events-auto z-50 ml-auto">
                     <motion.button
                         whileHover={{ scale: 1.1, backgroundColor: "rgba(255,255,255,0.1)" }}
                         whileTap={{ scale: 0.95 }}
@@ -203,10 +203,10 @@ const Navbar = () => {
                                     initial={{ opacity: 0, y: 15, scale: 0.95 }}
                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                     exit={{ opacity: 0, y: 15, scale: 0.95 }}
-                                    className="absolute right-0 top-full mt-4 w-64 bg-[#0a0a0a]/95 backdrop-blur-3xl border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,1)] rounded-3xl py-4 z-50 overflow-hidden"
+                                    className="absolute right-0 top-full mt-4 w-[200px] sm:w-[240px] md:w-64 bg-[#0a0a0a]/95 backdrop-blur-3xl border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,1)] rounded-3xl py-4 z-50 overflow-hidden transform-gpu"
                                 >
-                                    <div className="px-6 py-3 border-b border-white/5 mb-2">
-                                        <p className="text-white text-[11px] font-black uppercase tracking-[0.2em]">{user.firstName} {user.lastName}</p>
+                                    <div className="px-5 py-3 border-b border-white/5 mb-2">
+                                        <p className="text-white text-[11px] font-black uppercase tracking-[0.2em] truncate">{user.firstName} {user.lastName}</p>
                                         <p className="text-gray-500 text-[10px] mt-1 italic truncate">{user.email}</p>
                                     </div>
                                     {[

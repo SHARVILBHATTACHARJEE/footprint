@@ -93,7 +93,7 @@ const OrdersPopup = ({ isOpen, onClose }) => {
                     animate={{ scale: 1, y: 0 }}
                     exit={{ scale: 0.95, y: 20 }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    className="relative w-full max-w-2xl bg-[#111] border border-[#333] p-8 md:p-10 shadow-2xl flex flex-col max-h-[90vh] overflow-hidden"
+                    className="relative w-full max-w-2xl bg-[#111] border border-[#333] p-4 sm:p-8 md:p-10 shadow-2xl flex flex-col max-h-[90vh] overflow-hidden"
                 >
                     <button 
                         onClick={onClose}
@@ -102,11 +102,11 @@ const OrdersPopup = ({ isOpen, onClose }) => {
                         <X size={24} />
                     </button>
 
-                    <div className="mb-8 shrink-0">
-                        <h2 className="text-3xl font-black uppercase text-white tracking-tight mb-2 flex items-center gap-3">
+                    <div className="mb-6 shrink-0 pt-4 md:pt-0">
+                        <h2 className="text-2xl md:text-3xl font-black uppercase text-white tracking-tight mb-2 flex items-center gap-3">
                             <Package className="text-[#00ff88]" /> Your Orders
                         </h2>
-                        <p className="text-gray-400 text-sm font-mono leading-relaxed">
+                        <p className="text-gray-400 text-xs md:text-sm font-mono leading-relaxed">
                             Track and view your recent purchases.
                         </p>
                     </div>
@@ -129,23 +129,23 @@ const OrdersPopup = ({ isOpen, onClose }) => {
                             </div>
                         ) : (
                             orders.map((order) => (
-                                <div key={order.id} className="bg-[#1a1a1a] border border-[#222] rounded-xl p-6 transition-all hover:border-[#444] group shadow-lg">
-                                    <div className="flex flex-wrap justify-between items-start mb-6 gap-4 border-b border-[#333] pb-4">
-                                        <div>
-                                            <p className="text-xs text-gray-500 font-mono mb-1">ORDER ID</p>
+                                <div key={order.id} className="bg-[#1a1a1a] border border-[#222] rounded-xl p-4 sm:p-6 transition-all hover:border-[#444] group shadow-lg">
+                                    <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between items-start sm:items-center mb-6 gap-3 sm:gap-4 border-b border-[#333] pb-4">
+                                        <div className="flex items-center justify-between sm:justify-start sm:flex-col sm:items-start w-full sm:w-auto gap-2">
+                                            <p className="text-xs text-gray-500 font-mono sm:mb-1">ORDER ID</p>
                                             <p className="font-mono text-white text-sm uppercase bg-black px-2 py-1 rounded inline-block border border-[#333]">
                                                 {order.id.slice(0, 10)}...
                                             </p>
                                         </div>
-                                        <div className="text-right">
-                                            <p className="text-xs text-gray-500 font-mono mb-1">DATE</p>
+                                        <div className="flex items-center justify-between sm:justify-start sm:flex-col sm:items-end w-full sm:w-auto gap-2 text-left sm:text-right">
+                                            <p className="text-xs text-gray-500 font-mono sm:mb-1">DATE</p>
                                             <p className="text-sm text-white font-mono">
                                                 {order.createdAt ? new Date(order.createdAt.toMillis()).toLocaleDateString() : 'Just now'}
                                             </p>
                                         </div>
-                                        <div>
-                                            <p className="text-xs text-gray-500 font-mono mb-1">STATUS</p>
-                                            <p className="text-xs font-bold uppercase tracking-wide flex items-center justify-center gap-1 text-[#00ff88] bg-[#00ff88]/10 px-3 py-1 rounded-full border border-[#00ff88]/20">
+                                        <div className="flex items-center justify-between sm:justify-start sm:flex-col sm:items-start w-full sm:w-auto gap-2">
+                                            <p className="text-xs text-gray-500 font-mono sm:mb-1">STATUS</p>
+                                            <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wide flex items-center justify-center gap-1 text-[#00ff88] bg-[#00ff88]/10 px-3 py-1 rounded-full border border-[#00ff88]/20">
                                                 <CheckCircle2 size={12} /> {order.status || 'Paid'}
                                             </p>
                                         </div>
@@ -159,7 +159,12 @@ const OrdersPopup = ({ isOpen, onClose }) => {
                                                 </div>
                                                 <div className="flex-1">
                                                     <h4 className="text-white font-bold uppercase text-sm">{item.name}</h4>
-                                                    <p className="text-xs text-gray-400 font-mono uppercase mt-1">Qty: {item.quantity}</p>
+                                                    <div className="flex items-center gap-3 mt-2">
+                                                        <p className="text-xs text-gray-400 font-mono uppercase bg-white/5 px-2 py-0.5 rounded border border-white/5">Qty: {item.quantity}</p>
+                                                        <p className="text-[10px] text-white font-bold font-mono tracking-widest uppercase bg-[#222] border border-[#444] px-2 py-0.5 rounded">
+                                                            Size {item.selectedSize || item.size || '8'}
+                                                        </p>
+                                                    </div>
                                                 </div>
                                                 <div className="text-right">
                                                     <p className="text-[#00ff88] font-bold text-lg">₹{item.price * item.quantity}</p>
@@ -168,14 +173,14 @@ const OrdersPopup = ({ isOpen, onClose }) => {
                                         ))}
                                     </div>
                                     
-                                    <div className="mt-6 pt-4 border-t border-[#333] flex justify-between items-center flex-wrap gap-4">
+                                    <div className="mt-6 pt-4 border-t border-[#333] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                                         <div className="flex gap-4 items-center">
                                             <span className="text-gray-400 uppercase tracking-widest text-xs font-bold">Total Paid</span>
                                             <span className="text-2xl font-black text-white">₹{order.totalAmount?.toFixed(2)}</span>
                                         </div>
                                         <button 
                                             onClick={() => setTrackingOrder(order)}
-                                            className="bg-[#00ff88]/10 text-[#00ff88] hover:bg-[#00ff88]/20 border border-[#00ff88]/30 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-2"
+                                            className="w-full sm:w-auto bg-[#00ff88]/10 text-[#00ff88] hover:bg-[#00ff88]/20 border border-[#00ff88]/30 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
                                         >
                                             <Truck size={16} /> Track Order
                                         </button>
@@ -249,7 +254,12 @@ const OrdersPopup = ({ isOpen, onClose }) => {
                                                         </div>
                                                         <div>
                                                             <p className="text-xs text-white font-bold max-w-[120px] truncate">{item.name}</p>
-                                                            <p className="text-[10px] text-gray-500 font-mono mt-0.5">Qty: {item.quantity}</p>
+                                                                <div className="flex items-center gap-2 mt-1">
+                                                                    <p className="text-[10px] text-gray-500 font-mono">Qty: {item.quantity}</p>
+                                                                    <p className="text-[9px] text-[#00ff88] font-bold font-mono tracking-widest border border-[#00ff88]/30 px-2 py-[2px] rounded bg-[#00ff88]/10 uppercase">
+                                                                        UK {item.selectedSize || item.size || '8'}
+                                                                    </p>
+                                                                </div>
                                                         </div>
                                                     </div>
                                                 ))}

@@ -423,69 +423,69 @@ const SoleSizeDetector = () => {
                         <table className="w-full text-left border-collapse relative z-10">
                             <thead>
                                 <tr className="border-b border-white/10">
-                                    <th className="py-5 px-6 text-[#00ff88] font-bold uppercase tracking-widest text-sm">Foot Length (cm)</th>
-                                    <th className="py-5 px-6 font-bold uppercase tracking-widest text-sm text-gray-300">UK Size</th>
-                                    <th className="py-5 px-6 font-bold uppercase tracking-widest text-sm text-gray-300">EU Size</th>
-                                    <th className="py-5 px-6 font-bold uppercase tracking-widest text-sm text-gray-300">US Men</th>
-                                    <th className="py-5 px-6 font-bold uppercase tracking-widest text-sm text-gray-300">US Women</th>
+                                    <th className="py-3 px-2 md:py-5 md:px-6 text-[#00ff88] font-bold uppercase tracking-widest text-[10px] md:text-sm whitespace-nowrap">Foot Length (cm)</th>
+                                    <th className="py-3 px-2 md:py-5 md:px-6 font-bold uppercase tracking-widest text-[10px] md:text-sm text-gray-300">UK Size</th>
+                                    <th className="py-3 px-2 md:py-5 md:px-6 font-bold uppercase tracking-widest text-[10px] md:text-sm text-gray-300">EU Size</th>
+                                    <th className="py-3 px-2 md:py-5 md:px-6 font-bold uppercase tracking-widest text-[10px] md:text-sm text-gray-300">US Men</th>
+                                    <th className="py-3 px-2 md:py-5 md:px-6 font-bold uppercase tracking-widest text-[10px] md:text-sm text-gray-300">US Women</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5">
-                                <tr className="hover:bg-white/5 transition-colors">
-                                    <td className="py-4 px-6 font-mono text-gray-400">Up to 22.5</td>
-                                    <td className="py-4 px-6 font-bold">3.5</td>
-                                    <td className="py-4 px-6 font-bold">36</td>
-                                    <td className="py-4 px-6 font-bold">4</td>
-                                    <td className="py-4 px-6 font-bold">5.5</td>
+                                <tr className="hover:bg-white/5 transition-colors text-xs md:text-base">
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-mono text-gray-400 whitespace-nowrap">Up to 22.5</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">3.5</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">36</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">4</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">5.5</td>
                                 </tr>
-                                <tr className="hover:bg-white/5 transition-colors bg-white/[0.02]">
-                                    <td className="py-4 px-6 font-mono text-gray-400">22.6 - 23.5</td>
-                                    <td className="py-4 px-6 font-bold">4.5</td>
-                                    <td className="py-4 px-6 font-bold">37</td>
-                                    <td className="py-4 px-6 font-bold">5</td>
-                                    <td className="py-4 px-6 font-bold">6.5</td>
+                                <tr className="hover:bg-white/5 transition-colors bg-white/[0.02] text-xs md:text-base">
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-mono text-gray-400 whitespace-nowrap">22.6 - 23.5</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">4.5</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">37</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">5</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">6.5</td>
                                 </tr>
-                                <tr className="hover:bg-white/5 transition-colors">
-                                    <td className="py-4 px-6 font-mono text-gray-400">23.6 - 24.5</td>
-                                    <td className="py-4 px-6 font-bold">5.5</td>
-                                    <td className="py-4 px-6 font-bold">38.5</td>
-                                    <td className="py-4 px-6 font-bold">6</td>
-                                    <td className="py-4 px-6 font-bold">7.5</td>
+                                <tr className="hover:bg-white/5 transition-colors text-xs md:text-base">
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-mono text-gray-400 whitespace-nowrap">23.6 - 24.5</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">5.5</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">38.5</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">6</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">7.5</td>
                                 </tr>
-                                <tr className="hover:bg-white/5 transition-colors bg-white/[0.02]">
-                                    <td className="py-4 px-6 font-mono text-gray-400">24.6 - 25.5</td>
-                                    <td className="py-4 px-6 font-bold">6</td>
-                                    <td className="py-4 px-6 font-bold">40</td>
-                                    <td className="py-4 px-6 font-bold">7</td>
-                                    <td className="py-4 px-6 font-bold">8.5</td>
+                                <tr className="hover:bg-white/5 transition-colors bg-white/[0.02] text-xs md:text-base">
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-mono text-gray-400 whitespace-nowrap">24.6 - 25.5</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">6</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">40</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">7</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">8.5</td>
                                 </tr>
-                                <tr className="hover:bg-white/5 transition-colors">
-                                    <td className="py-4 px-6 font-mono text-gray-400">25.6 - 26.5</td>
-                                    <td className="py-4 px-6 font-bold">7</td>
-                                    <td className="py-4 px-6 font-bold">41.5</td>
-                                    <td className="py-4 px-6 font-bold">8</td>
-                                    <td className="py-4 px-6 font-bold">9.5</td>
+                                <tr className="hover:bg-white/5 transition-colors text-xs md:text-base">
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-mono text-gray-400 whitespace-nowrap">25.6 - 26.5</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">7</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">41.5</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">8</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">9.5</td>
                                 </tr>
-                                <tr className="hover:bg-white/5 transition-colors bg-white/[0.02]">
-                                    <td className="py-4 px-6 font-mono text-gray-400">26.6 - 27.5</td>
-                                    <td className="py-4 px-6 font-bold">8.5</td>
-                                    <td className="py-4 px-6 font-bold">43</td>
-                                    <td className="py-4 px-6 font-bold">9.5</td>
-                                    <td className="py-4 px-6 font-bold">11</td>
+                                <tr className="hover:bg-white/5 transition-colors bg-white/[0.02] text-xs md:text-base">
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-mono text-gray-400 whitespace-nowrap">26.6 - 27.5</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">8.5</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">43</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">9.5</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">11</td>
                                 </tr>
-                                <tr className="hover:bg-white/5 transition-colors">
-                                    <td className="py-4 px-6 font-mono text-gray-400">27.6 - 28.5</td>
-                                    <td className="py-4 px-6 font-bold">10</td>
-                                    <td className="py-4 px-6 font-bold">44.5</td>
-                                    <td className="py-4 px-6 font-bold">11</td>
-                                    <td className="py-4 px-6 font-bold">12.5</td>
+                                <tr className="hover:bg-white/5 transition-colors text-xs md:text-base">
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-mono text-gray-400 whitespace-nowrap">27.6 - 28.5</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">10</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">44.5</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">11</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold">12.5</td>
                                 </tr>
-                                <tr className="hover:bg-white/5 transition-colors text-[#00ff88] bg-[#00ff88]/5">
-                                    <td className="py-4 px-6 font-mono border-t border-[#00ff88]/20">&gt; 28.5</td>
-                                    <td className="py-4 px-6 font-bold border-t border-[#00ff88]/20">11+</td>
-                                    <td className="py-4 px-6 font-bold border-t border-[#00ff88]/20">46+</td>
-                                    <td className="py-4 px-6 font-bold border-t border-[#00ff88]/20">12+</td>
-                                    <td className="py-4 px-6 font-bold border-t border-[#00ff88]/20">13.5+</td>
+                                <tr className="hover:bg-white/5 transition-colors text-[#00ff88] bg-[#00ff88]/5 text-xs md:text-base">
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-mono border-t border-[#00ff88]/20 whitespace-nowrap">&gt; 28.5</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold border-t border-[#00ff88]/20">11+</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold border-t border-[#00ff88]/20">46+</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold border-t border-[#00ff88]/20">12+</td>
+                                    <td className="py-3 px-2 md:py-4 md:px-6 font-bold border-t border-[#00ff88]/20">13.5+</td>
                                 </tr>
                             </tbody>
                         </table>
