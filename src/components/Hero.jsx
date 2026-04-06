@@ -40,7 +40,7 @@ const Hero = () => {
         <div
             ref={containerRef}
             onMouseMove={handleMouseMove}
-            className="relative w-full h-screen overflow-hidden bg-[#0a0a0a] text-white flex items-center justify-center p-8 perspective-1000"
+            className="relative w-full h-screen overflow-hidden bg-[#0a0a0a] text-white flex items-center justify-center p-4 sm:p-8 perspective-1000"
         >
             {/* Background Elements */}
             <div className="absolute inset-0 bg-gradient-to-br from-[#111] via-[#050505] to-[#000] z-0" />
@@ -64,7 +64,7 @@ const Hero = () => {
                         initial="visible"
                         animate="visible"
                     >
-                        <h1 className="text-[4rem] sm:text-[5rem] md:text-[7rem] font-bold leading-[0.9] tracking-tighter uppercase font-sans relative">
+                        <h1 className="text-5xl sm:text-[4rem] md:text-[6rem] lg:text-[7rem] font-bold leading-[0.9] tracking-tighter uppercase font-sans relative">
                             <span className="block">
                                 <motion.span variants={letterVariant} className="inline-block bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
                                     The
@@ -86,7 +86,7 @@ const Hero = () => {
                     <motion.p
                         initial={{ opacity: 1, y: 0 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="text-gray-400 text-lg md:text-xl max-w-md font-light text-center md:text-left"
+                        className="text-gray-400 text-base sm:text-lg md:text-xl max-w-md font-light text-center md:text-left mx-auto md:mx-0"
                     >
                         Experience the next generation of biomechanical footwear. Designed for kinetic perfection.
                     </motion.p>

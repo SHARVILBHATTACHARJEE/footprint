@@ -16,11 +16,17 @@ const modelsMap = {
     'Nike Air Force': '/glb_models/Nike_Air_Force.glb',
     'Nike Dunk Low': '/glb_models/Nike_Dunk_Low.glb',
     'Nike React Infinity': '/glb_models/Nike_React_Infinity.glb',
+    'Nike Air Zoom Pegasus 40': '/glb_models/Nike_Air_Zoom_Pegasus_40.glb',
     'Adidas Forum Low': '/glb_models/Addidas_Forum_Low.glb',
     'Adidas Ultraboost 22': '/glb_models/Addidas_Ultraboost.glb',
     'Adidas NMD_R1': '/glb_models/Adidas_NMD_R1.glb',
     'Adidas Superstar': '/glb_models/Adidas_Superstar.glb',
+    'Adidas Stan Smith': '/glb_models/Adidas_Stan_Smith.glb',
     'Air Jordan 1 Retro High OG': '/glb_models/Air_Jordan_1_Retro_HIGH.glb',
+    'Air Jordan 3 Retro': '/glb_models/Air_Jordan_3_Retro.glb',
+    'Air Jordan 4 Retro': '/glb_models/Air_Jordan_4_Retro.glb',
+    'Air Jordan 6 Retro': '/glb_models/Air_Jordan_6_Retro.glb',
+    'Air Jordan 11 Retro': '/glb_models/Air_Jordan_11_Retro.glb',
 };
 
 const getModelUrl = (productName) => {
@@ -32,10 +38,16 @@ const getModelUrl = (productName) => {
     if (lowerName.includes('air force')) return '/glb_models/Nike_Air_Force.glb';
     if (lowerName.includes('dunk low')) return '/glb_models/Nike_Dunk_Low.glb';
     if (lowerName.includes('react infinity')) return '/glb_models/Nike_React_Infinity.glb';
+    if (lowerName.includes('pegasus')) return '/glb_models/Nike_Air_Zoom_Pegasus_40.glb';
     if (lowerName.includes('forum low')) return '/glb_models/Addidas_Forum_Low.glb';
     if (lowerName.includes('ultraboost')) return '/glb_models/Addidas_Ultraboost.glb';
     if (lowerName.includes('nmd_r1')) return '/glb_models/Adidas_NMD_R1.glb';
     if (lowerName.includes('superstar')) return '/glb_models/Adidas_Superstar.glb';
+    if (lowerName.includes('stan smith')) return '/glb_models/Adidas_Stan_Smith.glb';
+    if (lowerName.includes('jordan 11')) return '/glb_models/Air_Jordan_11_Retro.glb';
+    if (lowerName.includes('jordan 3')) return '/glb_models/Air_Jordan_3_Retro.glb';
+    if (lowerName.includes('jordan 4')) return '/glb_models/Air_Jordan_4_Retro.glb';
+    if (lowerName.includes('jordan 6')) return '/glb_models/Air_Jordan_6_Retro.glb';
     if (lowerName.includes('jordan 1')) return '/glb_models/Air_Jordan_1_Retro_HIGH.glb';
     
     // Fallback to strict map

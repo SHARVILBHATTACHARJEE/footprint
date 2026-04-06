@@ -74,7 +74,7 @@ const Navbar = () => {
                 </div>
 
                 {/* Center - Expanding Logo Menu */}
-                <div className="absolute left-1/2 -translate-x-1/2 pointer-events-auto z-50">
+                <div className="hidden md:block absolute left-1/2 -translate-x-1/2 pointer-events-auto z-50">
                     <motion.div
                         ref={dockRef}
                         onMouseMove={handleMouseMove}

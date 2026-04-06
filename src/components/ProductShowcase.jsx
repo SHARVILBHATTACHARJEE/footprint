@@ -52,12 +52,12 @@ const ProductShowcase = () => {
     }, []);
 
     return (
-        <div ref={containerRef} className="relative w-full min-h-screen bg-black text-white py-24 px-8 overflow-hidden z-20">
-            <h2 className="text-5xl sm:text-[4rem] md:text-[6rem] font-bold uppercase text-center mb-16 md:mb-24 relative z-10">
+        <div ref={containerRef} className="relative w-full min-h-screen bg-black text-white py-16 md:py-24 px-4 md:px-8 overflow-hidden z-20">
+            <h2 className="text-4xl sm:text-5xl md:text-[5rem] lg:text-[6rem] px-2 font-bold uppercase text-center mb-12 md:mb-24 relative z-10 leading-tight">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">Smart Collection</span>
             </h2>
 
-            <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-16 relative z-10">
+            <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16 relative z-10 px-2 sm:px-4 md:px-0">
                 {products.map((product, index) => (
                     <motion.div
                         key={index}
@@ -90,10 +90,10 @@ const ProductShowcase = () => {
                                         setIsModalOpen(true);
                                     }}
                                 >
-                                    <h3 className="text-2xl font-bold uppercase mb-1 group-hover/title:text-[#00ff88] transition-colors">{product.name}</h3>
+                                    <h3 className="text-xl md:text-2xl font-bold uppercase mb-1 group-hover/title:text-[#00ff88] transition-colors leading-tight pr-2">{product.name}</h3>
                                     <p className="text-sm text-gray-400 font-mono">{product.description}</p>
                                 </div>
-                                <span className="text-xl font-bold text-[#00ff88]">₹{product.price}</span>
+                                <span className="text-lg md:text-xl font-bold text-[#00ff88] shrink-0 mt-1 md:mt-0">₹{product.price}</span>
                             </div>
 
                             <div className="w-full relative mt-4">

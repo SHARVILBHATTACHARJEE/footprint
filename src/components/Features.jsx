@@ -27,7 +27,7 @@ const MarqueeText = ({ children, direction = 1, speed = 20 }) => {
 
 const Features = () => {
     return (
-        <div className="relative w-full overflow-hidden bg-black text-white py-24">
+        <div className="relative w-full overflow-hidden bg-black text-white py-16 md:py-24">
 
             {/* Background Marquee Text */}
             <div className="absolute inset-0 flex flex-col justify-center opacity-5 pointer-events-none select-none">
@@ -35,7 +35,7 @@ const Features = () => {
                 <MarqueeText speed={1.5} direction={-1}>ADAPTIVE • REACTIVE • INTELLIGENT •</MarqueeText>
             </div>
 
-            <div className="container mx-auto px-8 relative z-10 grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
+            <div className="container mx-auto px-4 md:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
 
                 {/* Futuristic Core / Material Structure Visual */}
                 <div className="relative flex justify-center items-center">
@@ -145,7 +145,7 @@ const FeatureItem = ({ number, title, desc }) => (
         className="group border-b border-[#222] pb-8 hover:border-[#00ff88] transition-colors duration-500"
     >
         <span className="text-[#00ff88] font-mono text-sm mb-2 block">{number}</span>
-        <h3 className="text-3xl font-bold mb-4 group-hover:translate-x-4 transition-transform duration-300">{title}</h3>
+        <h3 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4 group-hover:translate-x-4 transition-transform duration-300 leading-tight">{title}</h3>
         <p className="text-gray-400 max-w-sm group-hover:text-white transition-opacity duration-300">{desc}</p>
     </motion.div>
 );
