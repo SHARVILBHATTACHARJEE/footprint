@@ -32,9 +32,11 @@ const Chatbot = () => {
                 }
 
                 // Inject product list into context
-                const catalogContext = data.map(p => 
-                    `- ID: ${p.id}, Name: ${p.name}, Price: INR ${p.price || p.feature_price || 2999}, Category: ${p.category}, Style: ${p.walking_style || 'All-Purpose'}, Specs: ${p.description}`
-                ).join("\n");
+                const catalogContext = data.map(p => {
+                    const rawPrice = p.feature_price || p.price || '0';
+                    const parsedPrice = parseFloat(rawPrice.toString().replace(/[^0-9.]/g, ''));
+                    return `- ID: ${p.id}, Name: ${p.name}, Price: INR ${parsedPrice}, Category: ${p.category}, Style: ${p.walking_style || 'All-Purpose'}, Specs: ${p.description}`;
+                }).join("\n");
 
                 const systemInstruction = `You are a premium AI Footwear Specialist for an innovative brand named 'Footprint'. 
 Your goal is to converse with users naturally, understand their foot profile (like flat feet, running frequency, or joint pain), and recommend the absolute BEST shoes from our catalog.
@@ -198,7 +200,7 @@ ${catalogContext}`;
                                                             <div className="flex-1">
                                                                 <h4 className="text-[11px] md:text-xs font-bold text-white uppercase line-clamp-1">{product.name}</h4>
                                                                 <p className="text-[9px] md:text-[10px] text-gray-400 font-mono tracking-wider">{product.walking_style || 'All-Purpose'}</p>
-                                                                <p className="text-xs text-[#00ff88] font-bold mt-1">₹{product.price || product.feature_price || '2999'}</p>
+                                                                <p className="text-xs text-[#00ff88] font-bold mt-1">₹{parseFloat((product.feature_price || product.price || '0').toString().replace(/[^0-9.]/g, ''))}</p>
                                                             </div>
                                                             <Link 
                                                                 to="/shop"
