@@ -109,6 +109,24 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
         }
     }, [existingReview, isOpen]);
 
+    useEffect(() => {
+        if (isSimulatorOpen && product && product.lifecycle_images) {
+            // Preload all lifecycle images to ensure instant transitions
+            const images = [
+                product.lifecycle_images.normal,
+                product.lifecycle_images.m3,
+                product.lifecycle_images.m6,
+                product.lifecycle_images.m12
+            ];
+            images.forEach(src => {
+                if (src) {
+                    const img = new Image();
+                    img.src = src;
+                }
+            });
+        }
+    }, [isSimulatorOpen, product]);
+
     if (!product) return null;
 
     const renderStars = (rating) => {

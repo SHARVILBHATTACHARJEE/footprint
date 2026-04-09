@@ -147,7 +147,7 @@ ${catalogContext}`;
                 initial={{ scale: 0 }}
                 animate={{ scale: isOpen ? 0 : 1 }}
                 onClick={() => setIsOpen(true)}
-                className={`fixed bottom-6 right-6 z-[60] bg-[#00ff88] text-black p-4 rounded-full shadow-[0_0_20px_rgba(0,255,136,0.3)] hover:bg-[#00cc6a] hover:scale-110 transition-all ${isOpen ? 'pointer-events-none' : ''}`}
+                className={`fixed bottom-28 md:bottom-6 right-4 md:right-6 z-[110] bg-[#00ff88] text-black p-4 rounded-full shadow-[0_0_20px_rgba(0,255,136,0.3)] hover:bg-[#00cc6a] hover:scale-110 transition-all ${isOpen ? 'pointer-events-none' : ''}`}
             >
                 <MessageSquare size={24} />
             </motion.button>
@@ -159,7 +159,7 @@ ${catalogContext}`;
                         initial={{ opacity: 0, y: 50, scale: 0.9 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 50, scale: 0.9 }}
-                        className="fixed bottom-6 right-6 z-[70] w-full max-w-[350px] h-[500px] bg-[#0a0a0a] border border-[#222] rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+                        className="fixed bottom-28 md:bottom-6 right-4 md:right-6 z-[120] w-[calc(100vw-32px)] md:w-full max-w-[350px] h-[65vh] md:h-[500px] bg-[#0a0a0a] border border-[#222] rounded-2xl shadow-2xl flex flex-col overflow-hidden"
                     >
                         {/* Header */}
                         <div className="flex justify-between items-center p-4 border-b border-[#222] bg-[#111]">

@@ -12,6 +12,9 @@
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
     "@google/generative-ai": "^0.24.1",
+    "@mediapipe/camera_utils": "^0.3.1675466862",
+    "@mediapipe/drawing_utils": "^0.3.1675466124",
+    "@mediapipe/pose": "^0.5.1675469404",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
     "@tailwindcss/postcss": "^4.1.18",
