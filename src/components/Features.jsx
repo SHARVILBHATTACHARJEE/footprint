@@ -37,79 +37,71 @@ const Features = () => {
 
             <div className="container mx-auto px-4 md:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
 
-                {/* Futuristic Core / Material Structure Visual */}
-                <div className="relative flex justify-center items-center">
+                {/* Product Feature Mapping Visual */}
+                <div className="relative flex justify-center items-center h-full min-h-[400px]">
                     <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        whileInView={{ scale: 1, opacity: 1 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 1 }}
-                        className="w-full max-w-md aspect-square relative flex items-center justify-center"
+                        className="w-full max-w-xl aspect-square relative flex items-center justify-center p-4 md:p-8"
                     >
-                        {/* Outer Geometric Frame */}
-                        <div className="absolute inset-0 border border-[#222] rounded-full opacity-20" />
+                        {/* Background Glow */}
+                        <div className="absolute inset-0 bg-gradient-to-tr from-[#00ff88]/10 to-transparent rounded-full blur-3xl opacity-30 pointer-events-none" />
 
-                        {/* Orbiting Rings */}
-                        {[1, 2, 3].map((ring, i) => (
-                            <motion.div
-                                key={i}
-                                className="absolute border border-[#00ff88]/30 rounded-full"
-                                style={{
-                                    width: `${60 + i * 20}%`,
-                                    height: `${60 + i * 20}%`,
-                                    borderStyle: i % 2 === 0 ? "solid" : "dashed",
-                                }}
-                                animate={{ rotate: i % 2 === 0 ? 360 : -360 }}
-                                transition={{
-                                    duration: 20 + i * 5,
-                                    repeat: Infinity,
-                                    ease: "linear",
-                                }}
-                            />
-                        ))}
+                        {/* Main Product Image (Increased Size) */}
+                        <motion.img
+                            src="/images/shoes-nobg/shoe13_normal-no-bg.png"
+                            alt="Feature Highlight"
+                            className="relative z-10 w-[110%] md:w-[130%] scale-110 object-contain drop-shadow-[0_40px_60px_rgba(0,0,0,0.8)]"
+                            animate={{ y: [-10, 10, -10] }}
+                            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                        />
 
-                        {/* Central Energy Core */}
+                        {/* Feature Pointers (Re-positioned outwards) */}
+                        {/* Lattice Upper - Pointing to top heel/collar */}
                         <motion.div
-                            className="w-32 h-32 bg-black border border-[#00ff88] rounded-full flex items-center justify-center relative z-10 shadow-[0_0_50px_rgba(0,255,136,0.2)]"
-                            animate={{
-                                boxShadow: ["0 0 20px rgba(0,255,136,0.2)", "0 0 60px rgba(0,255,136,0.6)", "0 0 20px rgba(0,255,136,0.2)"],
-                            }}
-                            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                            className="absolute top-[45%] left-[0%] md:left-[5%] flex items-center gap-2 z-20"
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.4 }}
                         >
-                            {/* Inner Pulsing Field */}
-                            <motion.div
-                                className="w-full h-full rounded-full bg-[#00ff88]/10 blur-xl absolute"
-                                animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
-                                transition={{ duration: 3, repeat: Infinity }}
-                            />
+                            <div className="text-right">
+                                <div className="text-[#00ff88] text-[9px] sm:text-[11px] font-mono tracking-widest font-bold">LATTICE UPPER</div>
+                                <div className="text-gray-400 text-[8px] uppercase">Climate Control</div>
+                            </div>
+                            <div className="w-16 md:w-32 h-[1px] bg-gradient-to-r from-transparent to-[#00ff88]" />
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#00ff88] shadow-[0_0_10px_#00ff88]" />
+                        </motion.div>
 
-                            {/* Core Icon / Graphic */}
-                            <div className="text-[#00ff88] font-mono text-xs flex flex-col items-center gap-1 z-20">
-                                <span className="text-3xl font-bold">CORE</span>
-                                <span className="text-[10px] tracking-widest opacity-70">ACTIVE</span>
+                        {/* Aero Foam - Pointing to middle/rear sole */}
+                        <motion.div
+                            className="absolute bottom-[33%] right-[-0%] md:right-[0%] flex items-center gap-2 z-20"
+                            initial={{ opacity: 0, x: 20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.6 }}
+                        >
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#00ff88] shadow-[0_0_10px_#00ff88]" />
+                            <div className="w-16 md:w-32 h-[1px] bg-gradient-to-l from-transparent to-[#00ff88]" />
+                            <div className="text-left">
+                                <div className="text-[#00ff88] text-[9px] sm:text-[11px] font-mono tracking-widest font-bold">AERO FOAM</div>
+                                <div className="text-gray-400 text-[8px] uppercase">Adaptive Cushion</div>
                             </div>
                         </motion.div>
 
-                        {/* Floating Data Points */}
+                        {/* Micro Treads - Pointing to bottom front tread */}
                         <motion.div
-                            className="absolute bottom-10 left-10 bg-black/80 border border-[#222] p-2 rounded text-[10px] font-mono text-[#00ff88]"
-                            initial={{ opacity: 0, x: -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.5 }}
+                            className="absolute bottom-[27%] left-[0%] md:left-[5%] flex items-center gap-2 z-20"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.8 }}
                         >
-                            <div className="opacity-50 text-white">SYNC RATE</div>
-                            <div>98.4% STABLE</div>
+                            <div className="text-right">
+                                <div className="text-[#00ff88] text-[9px] sm:text-[11px] font-mono tracking-widest font-bold">MICRO TREADS</div>
+                                <div className="text-gray-400 text-[8px] uppercase">Dynamic Traction</div>
+                            </div>
+                            <div className="w-12 md:w-24 h-[1px] bg-gradient-to-r from-transparent to-[#00ff88]" />
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#00ff88] shadow-[0_0_10px_#00ff88]" />
                         </motion.div>
-
-                        <motion.div
-                            className="absolute top-10 right-10 bg-black/80 border border-[#222] p-2 rounded text-[10px] font-mono text-[#00ff88]"
-                            initial={{ opacity: 0, x: 20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.7 }}
-                        >
-                            <div className="opacity-50 text-white">LATTICE</div>
-                            <div>ADAPTIVE MESH</div>
-                        </motion.div>
-
                     </motion.div>
                 </div>
 
@@ -122,8 +114,8 @@ const Features = () => {
                     />
                     <FeatureItem
                         number="02"
-                        title="Neural Connectivity"
-                        desc="Embedded sensors track stride length, cadence, and impact force in real-time."
+                        title="Dynamic Traction"
+                        desc="Engineered micro-tread patterns providing multi-surface grip and stability."
                     />
                     <FeatureItem
                         number="03"
