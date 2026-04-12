@@ -91,34 +91,12 @@ const ProductShowcase = () => {
                                     }}
                                 >
                                     <h3 className="text-xl md:text-2xl font-bold uppercase mb-1 group-hover/title:text-[#00ff88] transition-colors leading-tight pr-2">{product.name}</h3>
-                                    <p className="text-sm text-gray-400 font-mono">{product.description}</p>
+
                                 </div>
                                 <span className="text-lg md:text-xl font-bold text-[#00ff88] shrink-0 mt-1 md:mt-0">₹{product.price}</span>
                             </div>
 
-                            <div className="w-full relative mt-4">
-                                <select
-                                    value={selectedSizes[product.id] || '8'}
-                                    onChange={(e) => setSelectedSizes(prev => ({ ...prev, [product.id]: e.target.value }))}
-                                    className="w-full bg-[#111] border border-[#333] text-white text-xs uppercase tracking-widest font-bold px-4 py-3 outline-none focus:border-[#00ff88] cursor-pointer appearance-none transition-colors"
-                                    onClick={(e) => e.stopPropagation()}
-                                >
-                                    {['6','7','8','9','10','11','12'].map(s => <option key={s} value={s}>SIZE: UK {s}</option>)}
-                                </select>
-                                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#00ff88] text-xs">
-                                    ▼
-                                </div>
-                            </div>
 
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    addToCart(product, selectedSizes[product.id] || '8');
-                                }}
-                                className="w-full mt-4 flex items-center justify-center gap-2 bg-[#111] hover:bg-[#00ff88] text-white hover:text-black border border-[#333] hover:border-[#00ff88] transition-all duration-300 py-3 uppercase tracking-widest font-bold text-sm"
-                            >
-                                <ShoppingCart size={16} /> Add to Cart
-                            </button>
                         </div>
                     </motion.div>
                 ))}

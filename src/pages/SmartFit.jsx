@@ -435,7 +435,7 @@ const SmartFit = () => {
                                                         setSelectedProduct(product);
                                                         setIsModalOpen(true);
                                                     }}
-                                                    className="relative w-full aspect-[4/5] overflow-hidden bg-[#0a0a0a] mb-6 rounded-xl border border-[#333] group-hover:border-[#00ff88] transition-colors cursor-pointer"
+                                                    className="relative w-full aspect-[5/4] overflow-hidden bg-transparent mb-6 rounded-sm cursor-pointer flex items-center justify-center"
                                                 >
                                                     <img
                                                         src={product.image}
@@ -461,31 +461,9 @@ const SmartFit = () => {
                                                         </div>
                                                         <span className="text-xl font-bold text-[#00ff88]">₹{product.price}</span>
                                                     </div>
-                                                    <p className="text-sm text-gray-400 pt-2 min-h-[40px] italic">{product.description}</p>
 
-                                                    <div className="w-full relative mt-4">
-                                                        <select
-                                                            value={selectedSizes[product.id] || '8'}
-                                                            onChange={(e) => setSelectedSizes(prev => ({ ...prev, [product.id]: e.target.value }))}
-                                                            className="w-full bg-[#111] border border-[#333] text-white text-xs uppercase tracking-widest font-bold px-4 py-3 outline-none focus:border-[#00ff88] cursor-pointer appearance-none transition-colors"
-                                                            onClick={(e) => e.stopPropagation()}
-                                                        >
-                                                            {['6','7','8','9','10','11','12'].map(s => <option key={s} value={s}>SIZE: UK {s}</option>)}
-                                                        </select>
-                                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#00ff88] text-xs">
-                                                            ▼
-                                                        </div>
-                                                    </div>
 
-                                                    <button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            addToCart(product, selectedSizes[product.id] || '8');
-                                                        }}
-                                                        className="w-full mt-4 flex items-center justify-center gap-2 bg-[#111] hover:bg-[#00ff88] text-white hover:text-black border border-[#333] hover:border-[#00ff88] transition-all duration-300 py-3 uppercase tracking-widest font-bold text-sm"
-                                                    >
-                                                        <ShoppingCart size={16} /> Add to Cart
-                                                    </button>
+
                                                 </div>
                                             </motion.div>
                                         ))}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { createPortal } from 'react-dom';
 import { X, CreditCard, Tag, BadgePercent, ShieldCheck, MapPin, Plus, ArrowLeft, Pencil, Trash2, CheckCircle, XCircle } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { collection, addDoc, getDocs, query, where, serverTimestamp, doc, updateDoc, deleteDoc } from 'firebase/firestore';
@@ -314,15 +315,18 @@ const CheckoutPopup = ({ isOpen, onClose, subtotal }) => {
 
                             // Replace these placeholder strings with your actual EmailJS credentials
                             // Try finding them at: https://dashboard.emailjs.com/admin
-                            await emailjs.send(
+                            emailjs.send(
                                 import.meta.env.VITE_EMAILJS_SERVICE_ID,    
                                 import.meta.env.VITE_EMAILJS_ORDER_TEMPLATE_ID,   
                                 templateParams,
                                 import.meta.env.VITE_EMAILJS_PUBLIC_KEY     
-                            );
-                            console.log("Confirmation email sent successfully!");
+                            ).then(() => {
+                                console.log("Confirmation email sent successfully!");
+                            }).catch(emailError => {
+                                console.error("Failed to send confirmation email:", emailError);
+                            });
                         } catch (emailError) {
-                            console.error("Failed to send confirmation email:", emailError);
+                            console.error("Email setup error:", emailError);
                         }
                     }
                 } catch (error) {
@@ -370,14 +374,14 @@ const CheckoutPopup = ({ isOpen, onClose, subtotal }) => {
         </div>
     );
 
-    return (
+    return createPortal(
         <AnimatePresence>
             {isOpen && (
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] flex items-center justify-center p-4"
+                    className="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] flex items-center justify-center p-4"
                 >
                     <motion.div
                         initial={{ scale: 0.95, opacity: 0, y: 20 }}
@@ -618,7 +622,7 @@ const CheckoutPopup = ({ isOpen, onClose, subtotal }) => {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
-                                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4"
+                                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[210] flex items-center justify-center p-4"
                             >
                                 <motion.div
                                     initial={{ scale: 0.9, opacity: 0 }}
@@ -655,7 +659,7 @@ const CheckoutPopup = ({ isOpen, onClose, subtotal }) => {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
-                                className="fixed inset-0 bg-black/80 backdrop-blur-md z-[80] flex items-center justify-center p-4"
+                                className="fixed inset-0 bg-black/80 backdrop-blur-md z-[220] flex items-center justify-center p-4"
                             >
                                 <motion.div
                                     initial={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -709,7 +713,8 @@ const CheckoutPopup = ({ isOpen, onClose, subtotal }) => {
                     setStep(2);
                 }}
             />
-        </AnimatePresence>
+        </AnimatePresence>,
+        document.body
     );
 };
 
