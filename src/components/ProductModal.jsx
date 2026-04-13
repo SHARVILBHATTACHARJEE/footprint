@@ -4,7 +4,11 @@ import { X, Star, ShoppingCart, Calendar, Box } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { getProductReviews, upsertReview } from '../firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { db } from '../firebase/config';
 import ShoeModel from './ShoeModel';
+import AuthPopup from './AuthPopup';
+import AuthChoicePopup from './AuthChoicePopup';
 
 const modelsMap = {
     // Map default seed products to models
@@ -81,6 +85,11 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
     const [is3dPreviewOpen, setIs3dPreviewOpen] = useState(false);
     const [selectedSize, setSelectedSize] = useState('');
     const [sizeError, setSizeError] = useState(false);
+    const [isAuthOpen, setIsAuthOpen] = useState(false);
+    const [isAuthLogin, setIsAuthLogin] = useState(true);
+    const [isAuthChoiceOpen, setIsAuthChoiceOpen] = useState(false);
+    const [hasPurchased, setHasPurchased] = useState(false);
+    const [isCheckingPurchase, setIsCheckingPurchase] = useState(false);
 
     // Check for logged-in user
     const userString = localStorage.getItem('user');
@@ -103,7 +112,46 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
             }
         };
 
+        const checkPurchase = async () => {
+            const currentUserString = localStorage.getItem('user');
+            const currentUser = currentUserString ? JSON.parse(currentUserString) : null;
+            if (!currentUser) {
+                setHasPurchased(false);
+                return;
+            }
+            setIsCheckingPurchase(true);
+            try {
+                const q = query(collection(db, 'orders'), where('userId', '==', currentUser.id));
+                const snapshot = await getDocs(q);
+                let purchased = false;
+                snapshot.forEach(doc => {
+                    const order = doc.data();
+                    if (order.items && order.items.some(item => item.id === product.id)) {
+                        purchased = true;
+                    }
+                });
+                setHasPurchased(purchased);
+            } catch (error) {
+                console.error("Error checking purchase history:", error);
+                if (error.message && error.message.includes('index')) {
+                    try {
+                        const fallbackQ = query(collection(db, 'orders'), where('userId', '==', currentUser.id));
+                        const snap = await getDocs(fallbackQ);
+                        let purchasedFb = false;
+                        snap.forEach(d => {
+                            const ord = d.data();
+                            if (ord.items && ord.items.some(i => i.id === product.id)) purchasedFb = true;
+                        });
+                        setHasPurchased(purchasedFb);
+                    } catch (fbErr) {}
+                }
+            } finally {
+                setIsCheckingPurchase(false);
+            }
+        };
+
         fetchReviews();
+        checkPurchase();
 
         // Prevent body scroll when modal is open
         document.body.style.overflow = 'hidden';
@@ -192,6 +240,7 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
     };
 
     return createPortal(
+        <>
         <AnimatePresence>
             {isOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 md:p-12">
@@ -377,9 +426,14 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
 
                                 {/* Review Submission Form OR Sign In Link */}
                                 <div className="mt-12 pt-8 border-t border-[#222]">
-                                    {user ? (
-                                        <div>
-                                            <h4 className="text-white font-bold uppercase tracking-widest mb-4">
+                                    {isCheckingPurchase ? (
+                                        <div className="bg-[#111] p-6 rounded-xl border border-[#222] text-center">
+                                            <p className="text-gray-400 font-mono text-sm">Verifying purchase history...</p>
+                                        </div>
+                                    ) : user ? (
+                                        hasPurchased ? (
+                                            <div>
+                                                <h4 className="text-white font-bold uppercase tracking-widest mb-4">
                                                 {existingReview ? "Edit Your Review" : "Write a Review"}
                                             </h4>
                                             <form onSubmit={handleReviewSubmit} className="bg-[#111] p-6 rounded-xl border border-[#222]">
@@ -421,10 +475,17 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
                                                 </button>
                                             </form>
                                         </div>
+                                        ) : (
+                                            <div className="bg-[#111] p-6 rounded-xl border border-[#222] text-center">
+                                                <p className="text-gray-400 font-mono text-sm">
+                                                    You must purchase this shoe before you can write a review.
+                                                </p>
+                                            </div>
+                                        )
                                     ) : (
                                         <div className="bg-[#111] p-6 rounded-xl border border-[#222] text-center">
                                             <p className="text-gray-400 font-mono text-sm">
-                                                <Link to="/login" className="text-[#00ff88] font-bold hover:underline uppercase tracking-widest">Sign in</Link> to write a review.
+                                                <button onClick={() => setIsAuthChoiceOpen(true)} className="text-[#00ff88] font-bold hover:underline uppercase tracking-widest">Sign in</button> to write a review.
                                             </p>
                                         </div>
                                     )}
@@ -534,7 +595,18 @@ const ProductModal = ({ product, isOpen, onClose, onAdd }) => {
                     </div>
                 )}
             </AnimatePresence>
-        </AnimatePresence>,
+        </AnimatePresence>
+        <AuthPopup isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} isInitialLogin={isAuthLogin} />
+        <AuthChoicePopup 
+            isOpen={isAuthChoiceOpen} 
+            onClose={() => setIsAuthChoiceOpen(false)} 
+            onChoice={(choice) => {
+                setIsAuthLogin(choice);
+                setIsAuthChoiceOpen(false);
+                setIsAuthOpen(true);
+            }} 
+        />
+        </>,
         document.body
     );
 };

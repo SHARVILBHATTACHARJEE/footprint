@@ -3,10 +3,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import CheckoutPopup from './CheckoutPopup';
+import AuthPopup from './AuthPopup';
+import AuthChoicePopup from './AuthChoicePopup';
 
 const CartSidebar = () => {
     const { isCartOpen, setIsCartOpen, cartItems, removeFromCart, updateQuantity, cartTotal } = useCart();
     const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+    const [isAuthOpen, setIsAuthOpen] = useState(false);
+    const [isAuthLogin, setIsAuthLogin] = useState(true);
+    const [isAuthChoiceOpen, setIsAuthChoiceOpen] = useState(false);
+
+    const userString = localStorage.getItem('user');
+    const user = userString ? JSON.parse(userString) : null;
 
     return (
         <>
@@ -108,7 +116,11 @@ const CartSidebar = () => {
                                 <button
                                     onClick={() => {
                                         setIsCartOpen(false);
-                                        setIsCheckoutOpen(true);
+                                        if (user) {
+                                            setIsCheckoutOpen(true);
+                                        } else {
+                                            setIsAuthChoiceOpen(true);
+                                        }
                                     }}
                                     className="w-full bg-white text-black font-bold uppercase tracking-widest py-4 rounded-full hover:bg-[#00ff88] transition-colors duration-300"
                                 >
@@ -127,6 +139,18 @@ const CartSidebar = () => {
             isOpen={isCheckoutOpen} 
             onClose={() => setIsCheckoutOpen(false)} 
             subtotal={cartTotal}
+        />
+
+        {/* Auth Popups */}
+        <AuthPopup isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} isInitialLogin={isAuthLogin} />
+        <AuthChoicePopup 
+            isOpen={isAuthChoiceOpen} 
+            onClose={() => setIsAuthChoiceOpen(false)} 
+            onChoice={(choice) => {
+                setIsAuthLogin(choice);
+                setIsAuthChoiceOpen(false);
+                setIsAuthOpen(true);
+            }} 
         />
         </>
     );

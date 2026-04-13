@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, X, Plus, Check } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { getProductsWithFeatures } from '../firebase/firestore';
+import ProductModal from '../components/ProductModal';
 
 const Compare = () => {
     const [products, setProducts] = useState([]);
@@ -10,6 +11,8 @@ const Compare = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { addToCart } = useCart();
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Fetch products with their features from Firestore
     useEffect(() => {
@@ -19,7 +22,14 @@ const Compare = () => {
                 const formattedData = data.map(item => {
                     const rawPrice = item.feature_price || item.price || '0';
                     const parsedPrice = parseFloat(rawPrice.toString().replace(/[^0-9.]/g, ''));
-                    return { ...item, price: parsedPrice };
+                    return { 
+                        ...item, 
+                        price: parsedPrice,
+                        image: item.image_url,
+                        walkingStyle: item.walking_style,
+                        rating: item.avg_rating ? Number(item.avg_rating).toFixed(1) : 'New',
+                        description: item.description || item.category || 'Premium Footwear'
+                    };
                 });
                 setProducts(formattedData);
 
@@ -172,24 +182,31 @@ const Compare = () => {
                                             <X size={14} />
                                         </button>
 
-                                        <div className="h-48 w-full bg-white/5 rounded-xl overflow-hidden mb-4 relative">
+                                        <div 
+                                            className="h-48 w-full bg-white/5 rounded-xl overflow-hidden mb-4 relative cursor-pointer"
+                                            onClick={() => {
+                                                setSelectedProduct(shoe);
+                                                setIsModalOpen(true);
+                                            }}
+                                        >
                                             <img
                                                 src={shoe.image_url}
                                                 alt={shoe.name}
-                                                className="w-full h-full object-cover"
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                                 onError={(e) => { e.target.src = 'https://via.placeholder.com/300/111111/FFFFFF?text=Shoe' }}
                                             />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none"></div>
                                         </div>
 
-                                        <h3 className="text-xl font-bold uppercase tracking-tight text-white mb-2">{shoe.name}</h3>
-
-                                        <button
-                                            onClick={() => addToCart(shoe)}
-                                            className="w-full py-2.5 bg-[#00ff88]/10 hover:bg-[#00ff88] text-[#00ff88] hover:text-black border border-[#00ff88]/30 hover:border-[#00ff88] transition-all rounded-lg font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2"
+                                        <h3 
+                                            className="text-xl font-bold uppercase tracking-tight text-white mb-2 cursor-pointer hover:text-[#00ff88] transition-colors"
+                                            onClick={() => {
+                                                setSelectedProduct(shoe);
+                                                setIsModalOpen(true);
+                                            }}
                                         >
-                                            <ShoppingBag size={14} /> Add to Cart
-                                        </button>
+                                            {shoe.name}
+                                        </h3>
                                     </th>
                                 ))}
                             </tr>
@@ -228,6 +245,13 @@ const Compare = () => {
                     <p className="text-gray-400 uppercase tracking-widest font-bold">Select at least one product above to begin comparison.</p>
                 </div>
             )}
+
+            <ProductModal
+                product={selectedProduct}
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onAdd={addToCart}
+            />
         </div >
     );
 };

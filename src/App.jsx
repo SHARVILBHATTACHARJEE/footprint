@@ -12,6 +12,7 @@ import Footer from './components/Footer';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Terms from './pages/Terms';
 import Admin from './pages/Admin';
+import HelpCenter from './pages/HelpCenter';
 import { CartProvider } from './context/CartContext';
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/help" element={<HelpCenter />} />
             </Routes>
           </div>
           <Footer />

@@ -7,7 +7,8 @@ import {
     setDoc,
     serverTimestamp,
     query,
-    orderBy
+    orderBy,
+    updateDoc
 } from 'firebase/firestore';
 import { db } from './config';
 
@@ -97,4 +98,54 @@ export const upsertReview = async (productId, { user_id, rating, review_text, fi
         });
         return { created: true };
     }
+};
+
+// ─── Help Center Tickets ────────────────────────────────────────────────────────
+
+/**
+ * Fetch all tickets created by a specific user.
+ */
+export const getUserTickets = async (userId) => {
+    const ticketsSnap = await getDocs(
+        query(
+            collection(db, 'tickets'),
+            orderBy('createdAt', 'desc')
+        )
+    );
+    return ticketsSnap.docs.map(d => ({ id: d.id, ...d.data() })).filter(t => t.userId === userId);
+};
+
+/**
+ * Submit a new issue ticket.
+ */
+export const addTicket = async (userId, ticketData) => {
+    const ticketRef = await addDoc(collection(db, 'tickets'), {
+        userId,
+        ...ticketData,
+        status: 'Open',
+        createdAt: serverTimestamp()
+    });
+    return ticketRef.id;
+};
+
+/**
+ * Fetch all tickets (Admin only)
+ */
+export const getAllTickets = async () => {
+    const ticketsSnap = await getDocs(
+        query(collection(db, 'tickets'), orderBy('createdAt', 'desc'))
+    );
+    return ticketsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+};
+
+/**
+ * Resolve a ticket and add an answer (Admin only)
+ */
+export const resolveTicket = async (ticketId, answer) => {
+    const ticketRef = doc(db, 'tickets', ticketId);
+    await updateDoc(ticketRef, {
+        status: 'Resolved',
+        answer: answer,
+        resolvedAt: serverTimestamp()
+    });
 };

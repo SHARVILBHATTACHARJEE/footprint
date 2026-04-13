@@ -76,6 +76,7 @@ const AuthPopup = ({ isOpen, onClose, isInitialLogin = false }) => {
                     phone: ''
                 }));
 
+                localStorage.removeItem('smartFitAnswers');
                 onClose();
                 window.location.reload();
             } catch (err) {
@@ -181,6 +182,7 @@ const AuthPopup = ({ isOpen, onClose, isInitialLogin = false }) => {
                 phone: `${countryCode}${phone}`
             }));
             
+            localStorage.removeItem('smartFitAnswers');
             onClose();
             window.location.reload();
         } catch (error) {

@@ -52,6 +52,7 @@ const Navbar = () => {
         try {
             await logoutUser();
             localStorage.removeItem('user');
+            localStorage.removeItem('smartFitAnswers');
             window.location.reload();
         } catch (error) {
             console.error('Logout failed', error);

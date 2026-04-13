@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, Bot, ArrowRight } from 'lucide-react';
+import { MessageSquare, X, Send, Bot, ArrowRight, ArrowUp, Sparkles } from 'lucide-react';
 import { getProducts } from '../firebase/firestore';
 import { Link } from 'react-router-dom';
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -9,8 +9,10 @@ const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || '');
 
 const Chatbot = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const [hasStarted, setHasStarted] = useState(false);
+    const [showFaq, setShowFaq] = useState(true);
     const [messages, setMessages] = useState([
-        { id: 1, sender: 'bot', text: 'Welcome to Footprint! I am your AI Footwear Specialist. To find your perfect match, tell me: what is your primary activity? (e.g., Running, City Walking, or Standing)' }
+        { id: 1, sender: 'bot', text: 'What can I help you with today?' }
     ]);
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
@@ -61,7 +63,7 @@ ${catalogContext}`;
                 const chat = generativeModel.startChat({
                     history: [
                         { role: "user", parts: [{ text: "Hello!" }] },
-                        { role: "model", parts: [{ text: "Welcome to Footprint! I am your AI Footwear Specialist. To find your perfect match, tell me: what is your primary activity? (e.g., Running, City Walking, or Standing)" }] }
+                        { role: "model", parts: [{ text: "What can I help you with today?" }] }
                     ]
                 });
 
@@ -81,10 +83,14 @@ ${catalogContext}`;
         scrollToBottom();
     }, [messages, isTyping]);
 
-    const handleSend = async () => {
-        if (!inputValue.trim()) return;
+    const handleSendMessage = async (textToSend) => {
+        if (!textToSend.trim()) return;
 
-        const userText = inputValue.trim();
+        if (showFaq) {
+            setShowFaq(false);
+        }
+
+        const userText = textToSend.trim();
         const userMsg = { id: Date.now(), sender: 'user', text: userText };
         setMessages(prev => [...prev, userMsg]);
         setInputValue('');
@@ -136,7 +142,7 @@ ${catalogContext}`;
 
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
-            handleSend();
+            handleSendMessage(inputValue);
         }
     };
 
@@ -147,9 +153,9 @@ ${catalogContext}`;
                 initial={{ scale: 0 }}
                 animate={{ scale: isOpen ? 0 : 1 }}
                 onClick={() => setIsOpen(true)}
-                className={`fixed bottom-28 md:bottom-6 right-4 md:right-6 z-[110] bg-[#00ff88] text-black p-4 rounded-full shadow-[0_0_20px_rgba(0,255,136,0.3)] hover:bg-[#00cc6a] hover:scale-110 transition-all ${isOpen ? 'pointer-events-none' : ''}`}
+                className={`fixed bottom-28 md:bottom-6 right-4 md:right-6 z-[110] bg-[var(--color-accent)] text-black p-4 rounded-full shadow-xl hover:bg-[#00cc6a] hover:scale-110 transition-all border border-transparent ${isOpen ? 'pointer-events-none' : ''}`}
             >
-                <MessageSquare size={24} />
+                <Sparkles size={24} />
             </motion.button>
 
             {/* Chat Panel */}
@@ -159,114 +165,137 @@ ${catalogContext}`;
                         initial={{ opacity: 0, y: 50, scale: 0.9 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 50, scale: 0.9 }}
-                        className="fixed bottom-28 md:bottom-6 right-4 md:right-6 z-[120] w-[calc(100vw-32px)] md:w-full max-w-[350px] h-[65vh] md:h-[500px] bg-[#0a0a0a] border border-[#222] rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+                        className="fixed bottom-28 md:bottom-6 right-4 md:right-6 z-[120] w-[calc(100vw-32px)] md:w-full max-w-[380px] h-[70vh] md:h-[550px] bg-black border border-gray-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
                     >
                         {/* Header */}
-                        <div className="flex justify-between items-center p-4 border-b border-[#222] bg-[#111]">
-                            <div className="flex items-center gap-3">
-                                <div className="bg-[#00ff88]/20 p-2 rounded-full text-[#00ff88]">
-                                    <Bot size={20} />
-                                </div>
-                                <div>
-                                    <h3 className="text-white font-bold uppercase tracking-wider text-sm">Footwear Specialist</h3>
-                                    <div className="flex items-center gap-1.5 align-middle">
-                                        <div className="w-2 h-2 rounded-full bg-[#00ff88] animate-pulse"></div>
-                                        <span className="text-[10px] uppercase text-[#00ff88] font-mono font-bold tracking-widest">Online</span>
-                                    </div>
-                                </div>
+                        <div className="flex justify-between items-center p-4 border-b border-gray-800 bg-black">
+                            <div className="flex items-center gap-2 text-white">
+                                <Sparkles size={20} className="text-[var(--color-accent)]" />
+                                <h3 className="font-semibold text-[17px]">Footprint AI Chat</h3>
                             </div>
-                            <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white transition-colors bg-[#1a1a1a] p-1.5 rounded-full hover:bg-[#333]">
-                                <X size={18} />
+                            <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white transition-colors p-1.5 rounded-full hover:bg-gray-900">
+                                <X size={20} />
                             </button>
                         </div>
 
-                        {/* Messages Area */}
-                        <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide">
-                            {messages.map((msg) => (
-                                <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} w-full`}>
-                                    <div className={`max-w-[85%] p-3 rounded-2xl ${
-                                        msg.sender === 'user' 
-                                            ? 'bg-[#00ff88] text-black rounded-tr-sm' 
-                                            : 'bg-[#1a1a1a] text-gray-200 border border-[#333] rounded-tl-sm'
-                                    }`}>
-                                        <p className="text-sm">{msg.text}</p>
-
-                                        {/* Dynamic Product Recommendations */}
-                                        {msg.type === 'recommendation' && msg.recommendedProducts?.length > 0 && (
-                                            <div className="mt-4 flex flex-col gap-2">
-                                                {msg.recommendedProducts.map(product => (
-                                                        <div key={product.id} className="bg-black border border-[#333] rounded-xl p-2 flex gap-3 items-center">
-                                                            <img src={product.image_url || product.image} alt={product.name} className="w-16 h-16 object-cover rounded-lg bg-[#111]" />
-                                                            <div className="flex-1">
-                                                                <h4 className="text-[11px] md:text-xs font-bold text-white uppercase line-clamp-1">{product.name}</h4>
-                                                                <p className="text-[9px] md:text-[10px] text-gray-400 font-mono tracking-wider">{product.walking_style || 'All-Purpose'}</p>
-                                                                <p className="text-xs text-[#00ff88] font-bold mt-1">₹{parseFloat((product.feature_price || product.price || '0').toString().replace(/[^0-9.]/g, ''))}</p>
-                                                            </div>
-                                                            <Link 
-                                                                to="/shop"
-                                                                onClick={() => setIsOpen(false)}
-                                                                className="p-2 bg-[#111] hover:bg-[#00ff88] text-[#00ff88] hover:text-black rounded-lg transition-colors border border-[#00ff88]/20 shrink-0"
-                                                            >
-                                                                <ArrowRight size={14} />
-                                                            </Link>
-                                                        </div>
-                                                    ))}
-                                            </div>
-                                        )}
-                                    </div>
+                        {!hasStarted ? (
+                            // Let's Go Interface
+                            <div className="flex-1 flex flex-col p-6 bg-black overflow-y-auto scrollbar-hide">
+                                <div className="mb-4 mt-2">
+                                    <Sparkles size={40} className="text-[var(--color-accent)]" />
                                 </div>
-                            ))}
-                            {isTyping && (
-                                <div className="flex justify-start">
-                                    <div className="bg-[#1a1a1a] border border-[#333] p-4 rounded-2xl rounded-tl-sm">
-                                        <div className="flex gap-1.5">
-                                            <motion.div animate={{ y: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 0.8, delay: 0 }} className="w-1.5 h-1.5 bg-gray-400 rounded-full" />
-                                            <motion.div animate={{ y: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 0.8, delay: 0.2 }} className="w-1.5 h-1.5 bg-gray-400 rounded-full" />
-                                            <motion.div animate={{ y: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 0.8, delay: 0.4 }} className="w-1.5 h-1.5 bg-gray-400 rounded-full" />
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                            <div ref={messagesEndRef} />
-                        </div>
-
-                        {/* Initial Quick Replies just for starting off */}
-                        {messages.length === 1 && !isTyping && (
-                            <div className="px-4 pb-2 flex gap-2 flex-wrap">
-                                {['Running', 'City Walking', 'Standing All Day', 'Flat Feet?'].map((chip) => (
+                                <h2 className="text-[26px] md:text-[28px] leading-tight font-medium text-white mb-6 tracking-tight">
+                                    Hi. I'm Footprint AI and I'm here to answer your questions, help with your orders, or connect you with a Footwear Expert.
+                                </h2>
+                                
+                                <div className="mt-auto pt-4 pb-2">
+                                    <p className="text-[11px] text-gray-400 mb-6 leading-relaxed">
+                                        By tapping "Let's go", you agree to <Link to="/terms" onClick={() => setIsOpen(false)} className="font-semibold text-gray-300 underline hover:text-[var(--color-accent)]">Footprint's Terms of Use</Link>, <Link to="/privacy" onClick={() => setIsOpen(false)} className="font-semibold text-gray-300 underline hover:text-[var(--color-accent)]">Privacy Policy</Link>, and monitoring, recording, and use of your chat.
+                                    </p>
                                     <button 
-                                        key={chip}
-                                        onClick={() => {
-                                            setInputValue(chip);
-                                        }}
-                                        className="whitespace-nowrap text-xs bg-[#1a1a1a] border border-[#333] text-gray-300 px-3 py-1.5 rounded-full hover:border-[#00ff88] hover:text-[#00ff88] transition-colors"
+                                        onClick={() => setHasStarted(true)}
+                                        className="w-full bg-[var(--color-accent)] text-black rounded-full py-3.5 px-6 flex justify-center items-center gap-2 hover:bg-[#00cc6a] transition-colors text-[17px] font-medium"
                                     >
-                                        {chip}
+                                        Let's Go <ArrowRight size={20} />
                                     </button>
-                                ))}
+                                </div>
                             </div>
-                        )}
+                        ) : (
+                            <>
+                                {/* Messages Area */}
+                                <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide bg-black">
+                                    {messages.map((msg, index) => {
+                                        if (index === 0) {
+                                            return (
+                                                <div key={msg.id} className="w-full mb-6 mt-2">
+                                                    <p className="text-white text-[17px] mb-6">{msg.text}</p>
+                                                    {showFaq && (
+                                                        <div className="space-y-2">
+                                                            <p className="font-semibold text-white text-[15px] mb-3">Frequently Asked Questions</p>
+                                                            {['Where is my order?', 'What are the best shoes for running?', 'How do I clean my sneakers?', 'Can you recommend shoes for flat feet?'].map((faq) => (
+                                                                <button
+                                                                    key={faq}
+                                                                    onClick={() => handleSendMessage(faq)}
+                                                                    className="w-full text-left bg-gray-900 hover:bg-gray-800 border border-transparent hover:border-gray-700 text-gray-200 px-4 py-3.5 rounded-xl transition-all text-[14px] font-medium"
+                                                                >
+                                                                    {faq}
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        }
 
-                        {/* Input Area */}
-                        <div className="p-4 bg-[#111] border-t border-[#222]">
-                            <div className="flex gap-2">
-                                <input
-                                    type="text"
-                                    value={inputValue}
-                                    onChange={(e) => setInputValue(e.target.value)}
-                                    onKeyPress={handleKeyPress}
-                                    placeholder="Type a message..."
-                                    className="flex-1 bg-[#0a0a0a] text-white text-sm px-4 py-3 rounded-xl border border-[#333] focus:outline-none focus:border-[#00ff88] transition-colors"
-                                />
-                                <button
-                                    onClick={handleSend}
-                                    disabled={!inputValue.trim()}
-                                    className="bg-[#00ff88] text-black p-3 rounded-xl hover:bg-[#00cc6a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shrink-0"
-                                >
-                                    <Send size={18} />
-                                </button>
-                            </div>
-                        </div>
+                                        return (
+                                            <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} w-full`}>
+                                                <div className={`max-w-[85%] p-3 rounded-2xl ${
+                                                    msg.sender === 'user' 
+                                                        ? 'bg-[var(--color-accent)] text-black rounded-tr-sm' 
+                                                        : 'bg-gray-900 text-white border border-gray-800 rounded-tl-sm shadow-sm'
+                                                }`}>
+                                                    <p className="text-[15px] leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+
+                                                    {/* Dynamic Product Recommendations */}
+                                                    {msg.type === 'recommendation' && msg.recommendedProducts?.length > 0 && (
+                                                        <div className="mt-4 flex flex-col gap-2">
+                                                            {msg.recommendedProducts.map(product => (
+                                                                <div key={product.id} className="bg-black border border-gray-800 rounded-xl p-2 flex gap-3 items-center shadow-sm">
+                                                                    <img src={product.image_url || product.image} alt={product.name} className="w-16 h-16 object-cover rounded-lg bg-gray-900" />
+                                                                    <div className="flex-1">
+                                                                        <h4 className="text-[12px] md:text-sm font-bold text-white uppercase line-clamp-1">{product.name}</h4>
+                                                                        <p className="text-[10px] md:text-xs text-gray-400 font-medium tracking-wide">{product.walking_style || 'All-Purpose'}</p>
+                                                                        <p className="text-sm text-white font-bold mt-1">₹{parseFloat((product.feature_price || product.price || '0').toString().replace(/[^0-9.]/g, ''))}</p>
+                                                                    </div>
+                                                                    <Link 
+                                                                        to="/shop"
+                                                                        onClick={() => setIsOpen(false)}
+                                                                        className="p-2 bg-gray-800 hover:bg-[var(--color-accent)] text-white hover:text-black rounded-lg transition-colors shrink-0"
+                                                                    >
+                                                                        <ArrowRight size={16} />
+                                                                    </Link>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                    {isTyping && (
+                                        <div className="flex justify-start">
+                                            <div className="bg-gray-900 border border-gray-800 p-4 rounded-2xl rounded-tl-sm shadow-sm">
+                                                <div className="flex gap-1.5">
+                                                    <motion.div animate={{ y: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 0.8, delay: 0 }} className="w-1.5 h-1.5 bg-gray-500 rounded-full" />
+                                                    <motion.div animate={{ y: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 0.8, delay: 0.2 }} className="w-1.5 h-1.5 bg-gray-500 rounded-full" />
+                                                    <motion.div animate={{ y: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 0.8, delay: 0.4 }} className="w-1.5 h-1.5 bg-gray-500 rounded-full" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div ref={messagesEndRef} />
+                                </div>
+
+                                {/* Input Area */}
+                                <div className="p-3 bg-black border-t border-gray-800 flex gap-2">
+                                    <input
+                                        type="text"
+                                        value={inputValue}
+                                        onChange={(e) => setInputValue(e.target.value)}
+                                        onKeyPress={handleKeyPress}
+                                        placeholder="Ask Footprint AI"
+                                        className="flex-1 bg-gray-900 text-white placeholder-gray-400 text-[15px] px-5 py-3 rounded-full border border-gray-800 focus:outline-none focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] transition-all"
+                                    />
+                                    <button
+                                        onClick={() => handleSendMessage(inputValue)}
+                                        disabled={!inputValue.trim()}
+                                        className="bg-[var(--color-accent)] text-black w-12 h-12 rounded-full hover:bg-[#00cc6a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shrink-0 border border-transparent disabled:bg-gray-800 disabled:text-gray-500"
+                                    >
+                                        <ArrowUp size={20} />
+                                    </button>
+                                </div>
+                            </>
+                        )}
                     </motion.div>
                 )}
             </AnimatePresence>
